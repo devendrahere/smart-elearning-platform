@@ -31,3 +31,32 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# IntelliJ
+.idea/
+*.iml
+out/
+
+# Maven
+target/
+
+# Gradle
+.gradle/
+build/
+
+# Logs & OS junk
+*.log
+.DS_Store
+Thumbs.db
+
+# Node (if you add front-end assets later)
+node_modules/
+
+# Spring Boot config
+#application-prod.yml
+application-*.properties
+application-*.yml
+
+# Keep dev config tracked (create it and commit)
+!application-dev.yml
+
