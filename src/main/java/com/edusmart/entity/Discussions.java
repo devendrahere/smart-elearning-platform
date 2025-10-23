@@ -20,6 +20,10 @@ public class Discussions {
     @JoinColumn(name = "user_id",nullable = false)
     private Users users;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "thread_id",nullable = false)
+    private DiscussionThread thread;
+
     @Column(name = "content",columnDefinition = "TEXT",nullable = false)
     private String content;
 
@@ -72,5 +76,13 @@ public class Discussions {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public DiscussionThread getThread() {
+        return thread;
+    }
+
+    public void setThread(DiscussionThread thread) {
+        this.thread = thread;
     }
 }

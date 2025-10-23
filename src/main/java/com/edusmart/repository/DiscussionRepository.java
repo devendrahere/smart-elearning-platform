@@ -11,4 +11,5 @@ import java.util.List;
 public interface DiscussionRepository extends JpaRepository<Discussions,Long> {
     List<Discussions> findByCourseCourseId(Long courseId);
     List<Discussions> findByUsersUserId(Long userId);
+    List<Discussions> findByThread_ThreadIdOrderByCreatedAtAsc(Long threadId);
 }

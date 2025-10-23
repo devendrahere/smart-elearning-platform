@@ -7,7 +7,9 @@ import com.edusmart.entity.Users;
 import com.edusmart.repository.NotificationRepository;
 import com.edusmart.repository.UserRepository;
 import com.edusmart.service.NotificationService;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,7 +25,8 @@ public class NotificationServiceImple implements NotificationService {
     @Autowired
     private UserRepository userRepository;
 
-
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     @Override
     public NotificationDTO createNotification(CreateNotificationDTO notificationDTO) {
@@ -40,7 +43,15 @@ public class NotificationServiceImple implements NotificationService {
 
         Notification saved= notificationRepository.save(notification);
 
-        return mapToDTO(saved);
+        NotificationDTO dto= mapToDTO(saved);
+
+        messagingTemplate.convertAndSendToUser(
+                user.getUserId().toString(),
+                "/queue/notifications",
+                dto
+        );
+
+        return dto;
     }
 
     @Override

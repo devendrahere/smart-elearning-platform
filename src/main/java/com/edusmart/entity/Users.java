@@ -45,6 +45,12 @@ public class Users {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuizAttempt> quizAttempts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<DiscussionThread> discussionThreads=new ArrayList<>();
+
+    @OneToMany(mappedBy = "postedBy",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Announcements> announcements=new ArrayList<>();
+
 
     @OneToMany
     private List<Notification> notifications=new ArrayList<>();

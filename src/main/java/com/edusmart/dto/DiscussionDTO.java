@@ -9,6 +9,7 @@ public class DiscussionDTO {
     private String username;
     private String content;
     private LocalDateTime createdAt;
+    private Long threadId;
 
     public Long getDiscussionId() {
         return discussionId;
@@ -56,5 +57,13 @@ public class DiscussionDTO {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Long getThreadId() {
+        return threadId;
+    }
+
+    public void setThreadId(Long threadId) {
+        this.threadId = threadId;
     }
 }
