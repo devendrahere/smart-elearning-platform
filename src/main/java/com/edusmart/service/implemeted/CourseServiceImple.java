@@ -6,6 +6,7 @@ import com.edusmart.dto.UserSummaryDTO;
 import com.edusmart.entity.Categories;
 import com.edusmart.entity.Courses;
 import com.edusmart.entity.Users;
+import com.edusmart.exception.ResourcesNotFound;
 import com.edusmart.repository.CategoryRepository;
 import com.edusmart.repository.CourseRepository;
 import com.edusmart.repository.UserRepository;
@@ -33,7 +34,8 @@ public class CourseServiceImple implements CourseService {
     @Override
     public CourseDTO createCourse(CourseDTO courseDTO) {
         //fetching instructor
-        Users instructor=userRepository.findById(courseDTO.getInstructor().getUserId()).orElseThrow(()->new RuntimeException("Instructor Not found with Id "+courseDTO.getInstructor().getUserId()));
+        Users instructor=userRepository.findById(courseDTO.getInstructor().getUserId())
+                .orElseThrow(()->new ResourcesNotFound("Instructor Not found with Id "+courseDTO.getInstructor().getUserId()));
         Courses course=mapToEntity(courseDTO);
         //adding instructor to course
         course.setInstructor(instructor);
@@ -50,7 +52,8 @@ public class CourseServiceImple implements CourseService {
 
     @Override
     public CourseDTO getCourseById(Long id) {
-        Courses course= courseRepository.findById(id).orElseThrow(()->new RuntimeException("No course found with id: "+id));
+        Courses course= courseRepository.findById(id)
+                .orElseThrow(()->new ResourcesNotFound("No course found with id: "+id));
 
         return mapToDTO(course);
     }
@@ -59,19 +62,19 @@ public class CourseServiceImple implements CourseService {
     public CourseDTO updateCourse(Long id, CourseDTO courseDTO) {
 
         Courses existing = courseRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("No course found with id: "+id));
+                .orElseThrow(()->new ResourcesNotFound("No course found with id: "+id));
         existing.setCourseTitle(courseDTO.getCourseTitle());
         existing.setCourseDescription(courseDTO.getCourseDescription());
         existing.setCreatedAt(LocalDateTime.now());
         if(courseDTO.getCategories()!=null && !courseDTO.getCategories().isEmpty()){
             Set<Categories> categoryEntity=courseDTO.getCategories().stream()
-                    .map(categoryDTO -> categoryRepository.findById(categoryDTO.getCategoryId()).orElseThrow(()->new RuntimeException("No Category with id found: "+categoryDTO.getCategoryId())))
+                    .map(categoryDTO -> categoryRepository.findById(categoryDTO.getCategoryId()).orElseThrow(()->new ResourcesNotFound("No Category with id found: "+categoryDTO.getCategoryId())))
                     .collect(Collectors.toSet());
             existing.setCategory(categoryEntity);
         }
         if (courseDTO.getInstructor()!=null){
             Users instructor=userRepository.findById(courseDTO.getInstructor().getUserId())
-                    .orElseThrow(()->new RuntimeException("No instructor found with id: "+courseDTO.getInstructor().getUserId()));
+                    .orElseThrow(()->new ResourcesNotFound("No instructor found with id: "+courseDTO.getInstructor().getUserId()));
 
             existing.setInstructor(instructor);
         }
@@ -90,7 +93,7 @@ public class CourseServiceImple implements CourseService {
     @Override
     public void deleteCourse(Long courseId) {
         if(!courseRepository.existsById(courseId)){
-            throw  new RuntimeException("Course with id "+courseId+" does not exists !");
+            throw  new ResourcesNotFound("Course with id "+courseId+" does not exists !");
         }
         courseRepository.deleteById(courseId);
     }

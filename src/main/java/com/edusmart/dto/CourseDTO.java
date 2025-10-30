@@ -1,6 +1,7 @@
 package com.edusmart.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -9,11 +10,16 @@ import java.util.Set;
 public class CourseDTO {
     private Long courseId;
     @NotBlank(message = "Course Title cannot be empty")
+    @Size(min = 3,max = 100 ,message = "The course title should be of length in between 3 and 100")
     private String courseTitle;
+    @Size(max = 200,message = "The description should under 200 characters")
     private String courseDescription;
+
     private LocalDateTime createdAt;
 
+    @NotBlank(message = "Instructors Details are required")
     private UserSummaryDTO instructor;
+
     private List<CategoryDTO> categories;
 
 

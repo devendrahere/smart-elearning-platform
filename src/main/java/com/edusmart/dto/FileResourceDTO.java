@@ -1,10 +1,14 @@
 package com.edusmart.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 import java.time.LocalDateTime;
 
 public class FileResourceDTO {
     private long fileId;
+    @NotBlank(message = "Filename is required")
     private String fileName;
+    @NotBlank(message = "FilePath is required")
     private String filePath;
     private LocalDateTime uploadAt;
 

@@ -1,8 +1,14 @@
 package com.edusmart.dto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+
 public class QuizResultDTO {
+    @NotNull(message = "Quiz Id is required")
     private Long quizId;
+    @NotNull(message = "User Id is required")
     private Long userId;
+    @PositiveOrZero(message = "Score needs to be valid")
     private int score;
     private boolean passed;
 

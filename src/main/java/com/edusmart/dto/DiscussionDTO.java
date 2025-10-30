@@ -1,14 +1,24 @@
 package com.edusmart.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDateTime;
 
 public class DiscussionDTO {
     private Long discussionId;
+    @NotNull(message = "Course Id is required")
     private Long courseId;
+    @NotNull(message = "User Id is required")
     private Long userId;
+    @NotBlank(message = "Username is required")
     private String username;
+    @NotBlank(message = "Content is required")
+    @Size(max = 255,message = "The content has max limit of 255 length")
     private String content;
     private LocalDateTime createdAt;
+    @NotNull(message = "Thread id is required")
     private Long threadId;
 
     public Long getDiscussionId() {

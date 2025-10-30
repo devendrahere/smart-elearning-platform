@@ -3,6 +3,7 @@ package com.edusmart.service.implemeted;
 import com.edusmart.dto.FileResourceDTO;
 import com.edusmart.entity.Courses;
 import com.edusmart.entity.FileResource;
+import com.edusmart.exception.ResourcesNotFound;
 import com.edusmart.repository.CourseRepository;
 import com.edusmart.repository.FileResourceRepository;
 import com.edusmart.service.FileResourceService;
@@ -37,13 +38,13 @@ public class FileResourceServiceImple implements FileResourceService {
     @Override
     public FileResourceDTO uploadFile(Long courseId, MultipartFile file) {
         Courses course = courseRepository.findById(courseId)
-                .orElseThrow(()->new RuntimeException("Course not found with id : "+courseId));
+                .orElseThrow(()->new ResourcesNotFound("Course not found with id : "+courseId));
 
         try {
             Files.createDirectories(Paths.get(storageDirectory));
         }
         catch (IOException e){
-            throw  new RuntimeException("Could not create uploads directory");
+            throw  new ResourcesNotFound("Could not create uploads directory");
         }
 
         String originalFileName=file.getOriginalFilename();
@@ -54,7 +55,7 @@ public class FileResourceServiceImple implements FileResourceService {
             Files.write(filepath, file.getBytes());
         }
         catch (IOException e){
-            throw  new RuntimeException("Error saving file : "+originalFileName+" "+e.getMessage());
+            throw  new ResourcesNotFound("Error saving file : "+originalFileName+" "+e.getMessage());
         }
 
         FileResource entity= new FileResource();
@@ -72,7 +73,7 @@ public class FileResourceServiceImple implements FileResourceService {
     public FileResourceDTO getFileById(Long fileId) {
 
         FileResource file= fileResourceRepository.findById(fileId)
-                .orElseThrow(()->new RuntimeException("file not found with id : "+fileId));
+                .orElseThrow(()->new ResourcesNotFound("file not found with id : "+fileId));
         return mapToDTO(file);
     }
 
@@ -87,12 +88,12 @@ public class FileResourceServiceImple implements FileResourceService {
     @Override
     public void deleteFile(Long fileId) {
         FileResource file = fileResourceRepository.findById(fileId)
-                .orElseThrow(()->new RuntimeException("File not found !"));
+                .orElseThrow(()->new ResourcesNotFound("File not found !"));
 
         try{
             Files.deleteIfExists(Path.of(file.getFilePath()));
         }catch (IOException e){
-            throw new RuntimeException("Error deleting file "+e.getMessage());
+            throw new ResourcesNotFound("Error deleting file "+e.getMessage());
         }
 
         fileResourceRepository.delete(file);
@@ -101,11 +102,11 @@ public class FileResourceServiceImple implements FileResourceService {
     @Override
     public Resource downloadFile(Long fileId) {
         FileResource file = fileResourceRepository.findById(fileId)
-                .orElseThrow(()->new RuntimeException("File not found !"));
+                .orElseThrow(()->new ResourcesNotFound("File not found !"));
 
         File localFile=new File(file.getFilePath());
         if(!localFile.exists()){
-            throw  new RuntimeException("File not found on disk");
+            throw  new ResourcesNotFound("File not found on disk");
         }
 
 

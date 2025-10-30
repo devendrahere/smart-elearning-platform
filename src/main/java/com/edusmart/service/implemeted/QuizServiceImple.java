@@ -6,6 +6,7 @@ import com.edusmart.dto.QuizResultDTO;
 import com.edusmart.entity.Courses;
 import com.edusmart.entity.Quiz;
 import com.edusmart.entity.Users;
+import com.edusmart.exception.ResourcesNotFound;
 import com.edusmart.repository.CourseRepository;
 import com.edusmart.repository.QuizRepository;
 import com.edusmart.repository.UserRepository;
@@ -34,7 +35,7 @@ public class QuizServiceImple implements QuizService {
 
     @Override
     public QuizDTO createQuiz(QuizDTO quizDTO) {
-        Courses course= courseRepository.findById(quizDTO.getCourseId()).orElseThrow(()->new RuntimeException("Course not found with id "+quizDTO.getCourseId()));
+        Courses course= courseRepository.findById(quizDTO.getCourseId()).orElseThrow(()->new ResourcesNotFound("Course not found with id "+quizDTO.getCourseId()));
 
         Quiz quiz =new Quiz();
         quiz.setQuizTitle(quizDTO.getQuizTitle());
@@ -49,7 +50,7 @@ public class QuizServiceImple implements QuizService {
     @Override
     public QuizDTO getQuizById(Long quizId) {
         Quiz quiz = quizRepository.findById(quizId)
-                .orElseThrow(()->new RuntimeException("Quiz not found with quiz id : "+quizId));
+                .orElseThrow(()->new ResourcesNotFound("Quiz not found with quiz id : "+quizId));
         return mapToDTO(quiz);
     }
 
@@ -64,10 +65,10 @@ public class QuizServiceImple implements QuizService {
     @Override
     public QuizResultDTO attemptQuiz(Long quizId, QuizAttemptDTO quizAttempt) {
         Quiz quiz = quizRepository.findById(quizId)
-                .orElseThrow(()->new RuntimeException("quiz not found with id: "+quizId));
+                .orElseThrow(()->new ResourcesNotFound("quiz not found with id: "+quizId));
 
         Users user= userRepository.findById(quizAttempt.getUserId())
-                .orElseThrow(()->new RuntimeException("user not found with user id: "+quizAttempt.getUserId()));
+                .orElseThrow(()->new ResourcesNotFound("user not found with user id: "+quizAttempt.getUserId()));
 
         Map<Long,String > submitted=quizAttempt.getAnswers();
 

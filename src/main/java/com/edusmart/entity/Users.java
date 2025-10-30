@@ -51,6 +51,12 @@ public class Users {
     @OneToMany(mappedBy = "postedBy",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Announcements> announcements=new ArrayList<>();
 
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Certificate> certificate=new ArrayList<>();
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<AnalyticsLog> analyticsLog=new ArrayList<>();
+
 
     @OneToMany
     private List<Notification> notifications=new ArrayList<>();
@@ -168,5 +174,37 @@ public class Users {
 
     public void setQuizAttempts(List<QuizAttempt> quizAttempts) {
         this.quizAttempts = quizAttempts;
+    }
+
+    public List<DiscussionThread> getDiscussionThreads() {
+        return discussionThreads;
+    }
+
+    public void setDiscussionThreads(List<DiscussionThread> discussionThreads) {
+        this.discussionThreads = discussionThreads;
+    }
+
+    public List<Announcements> getAnnouncements() {
+        return announcements;
+    }
+
+    public void setAnnouncements(List<Announcements> announcements) {
+        this.announcements = announcements;
+    }
+
+    public List<Certificate> getCertificate() {
+        return certificate;
+    }
+
+    public void setCertificate(List<Certificate> certificate) {
+        this.certificate = certificate;
+    }
+
+    public List<AnalyticsLog> getAnalyticsLog() {
+        return analyticsLog;
+    }
+
+    public void setAnalyticsLog(List<AnalyticsLog> analyticsLog) {
+        this.analyticsLog = analyticsLog;
     }
 }

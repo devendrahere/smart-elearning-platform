@@ -4,6 +4,7 @@ import com.edusmart.dto.*;
 import com.edusmart.entity.Courses;
 import com.edusmart.entity.Enrollments;
 import com.edusmart.entity.Users;
+import com.edusmart.exception.ResourcesNotFound;
 import com.edusmart.repository.CourseRepository;
 import com.edusmart.repository.EnrollmentRepository;
 import com.edusmart.repository.UserRepository;
@@ -31,12 +32,14 @@ public class EnrollmentServiceImple implements EnrollmentService {
 
     @Override
     public EnrollmentsDTO enrollStudent(Long userId, Long courseId) {
-        Users user=userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found with id: "+userId));
+        Users user=userRepository.findById(userId)
+                .orElseThrow(()->new ResourcesNotFound("User not found with id: "+userId));
 
-        Courses course=courseRepository.findById(courseId).orElseThrow(()->new RuntimeException("Course not found with id: "+courseId));
+        Courses course=courseRepository.findById(courseId)
+                .orElseThrow(()->new ResourcesNotFound("Course not found with id: "+courseId));
 
         if(enrollmentRepository.existsByUsersUserIdAndCoursesCourseId(userId,courseId)){
-            throw new RuntimeException("User already enrolled in this course.");
+            throw new ResourcesNotFound("User already enrolled in this course.");
         }
 //        if(!user.getRoles().){
 //            throw new RuntimeException("User is not eligible to enroll due to role issue");
@@ -63,7 +66,7 @@ public class EnrollmentServiceImple implements EnrollmentService {
                 .stream()
                 .filter(e-> e.getUsers().getUserId()==userId && e.getCourses().getCourseId()==courseId)
                 .findFirst()
-                .orElseThrow(()->new RuntimeException("Enrollment Not found !"));
+                .orElseThrow(()->new ResourcesNotFound("Enrollment Not found !"));
 
         enrollmentRepository.delete(enrollment);
     }

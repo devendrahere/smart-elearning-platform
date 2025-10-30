@@ -1,7 +1,10 @@
 package com.edusmart.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class RoleDTO {
     private int roleId;
+    @NotBlank(message = "RoleName is required")
     private String name;
 
     public int getRoleId() {

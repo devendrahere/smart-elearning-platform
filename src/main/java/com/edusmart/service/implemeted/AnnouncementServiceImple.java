@@ -4,6 +4,7 @@ import com.edusmart.dto.AnnouncementDTO;
 import com.edusmart.entity.Announcements;
 import com.edusmart.entity.Courses;
 import com.edusmart.entity.Users;
+import com.edusmart.exception.ResourcesNotFound;
 import com.edusmart.repository.AnnouncementRepository;
 import com.edusmart.repository.CourseRepository;
 import com.edusmart.repository.UserRepository;
@@ -30,9 +31,9 @@ public class AnnouncementServiceImple implements AnnouncementService {
     @Override
     public AnnouncementDTO createAnnouncement(Long courseId, String message, Long instructorId) {
         Users user =userRepository.findById(instructorId)
-                .orElseThrow(()->new RuntimeException("no user found with id : "+instructorId));
+                .orElseThrow(()->new ResourcesNotFound("no user found with id : "+instructorId));
         Courses course= courseRepository.findById(courseId)
-                .orElseThrow(()->new RuntimeException("no course found with id : "+courseId));
+                .orElseThrow(()->new ResourcesNotFound("no course found with id : "+courseId));
         Announcements announcement= new Announcements();
         announcement.setCourse(course);
         announcement.setMessage(message);

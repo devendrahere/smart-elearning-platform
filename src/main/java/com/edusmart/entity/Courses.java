@@ -53,6 +53,12 @@ public class Courses {
     @OneToMany(mappedBy = "course" ,cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Announcements> announcements=new ArrayList<>();
 
+    @OneToMany(mappedBy = "course",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Certificate> certificates=new ArrayList<>();
+
+    @OneToMany(mappedBy = "course",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<AnalyticsLog> analyticsLogs=new ArrayList<>();
+
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -159,5 +165,21 @@ public class Courses {
 
     public void setAnnouncements(List<Announcements> announcements) {
         this.announcements = announcements;
+    }
+
+    public List<AnalyticsLog> getAnalyticsLogs() {
+        return analyticsLogs;
+    }
+
+    public void setAnalyticsLogs(List<AnalyticsLog> analyticsLogs) {
+        this.analyticsLogs = analyticsLogs;
+    }
+
+    public List<Certificate> getCertificates() {
+        return certificates;
+    }
+
+    public void setCertificates(List<Certificate> certificates) {
+        this.certificates = certificates;
     }
 }

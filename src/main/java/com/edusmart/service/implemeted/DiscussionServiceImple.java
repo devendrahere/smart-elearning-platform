@@ -6,6 +6,7 @@ import com.edusmart.entity.Courses;
 import com.edusmart.entity.DiscussionThread;
 import com.edusmart.entity.Discussions;
 import com.edusmart.entity.Users;
+import com.edusmart.exception.ResourcesNotFound;
 import com.edusmart.repository.CourseRepository;
 import com.edusmart.repository.DiscussionRepository;
 import com.edusmart.repository.DiscussionThreadRepository;
@@ -36,10 +37,10 @@ public class DiscussionServiceImple implements DiscussionService {
     @Override
     public DiscussionDTO createDiscussion(DiscussionDTO discussionDTO) {
         Users user=userRepository.findById(discussionDTO.getUserId())
-                .orElseThrow(()->new RuntimeException("No user found with id: "+discussionDTO.getUserId()));
+                .orElseThrow(()->new ResourcesNotFound("No user found with id: "+discussionDTO.getUserId()));
 
         Courses course=courseRepository.findById(discussionDTO.getCourseId())
-                .orElseThrow(()->new RuntimeException("No course found with id: "+discussionDTO.getCourseId()));
+                .orElseThrow(()->new ResourcesNotFound("No course found with id: "+discussionDTO.getCourseId()));
 
         Discussions discussion=new Discussions();
         discussion.setUsers(user);
@@ -70,7 +71,7 @@ public class DiscussionServiceImple implements DiscussionService {
     @Override
     public void deleteDiscussion(Long discussionId) {
         if(!discussionRepository.existsById(discussionId)){
-            throw  new RuntimeException("No discussion found by id: "+discussionId);
+            throw  new ResourcesNotFound("No discussion found by id: "+discussionId);
         }
         discussionRepository.deleteById(discussionId);
     }
@@ -78,9 +79,9 @@ public class DiscussionServiceImple implements DiscussionService {
     @Override
     public DiscussionThreadDTO createThread(Long courseId, String title, Long createdBy) {
         Courses course=courseRepository.findById(courseId)
-                .orElseThrow(()->new RuntimeException("Course not Found with course id :"+courseId ));
+                .orElseThrow(()->new ResourcesNotFound("Course not Found with course id :"+courseId ));
         Users creator=userRepository.findById(createdBy)
-                .orElseThrow(()->new RuntimeException("User not found with user id :"+createdBy));
+                .orElseThrow(()->new ResourcesNotFound("User not found with user id :"+createdBy));
 
         DiscussionThread thread=new DiscussionThread();
         thread.setCourse(course);
@@ -112,9 +113,9 @@ public class DiscussionServiceImple implements DiscussionService {
     @Override
     public DiscussionDTO postMessage(Long threadId, DiscussionDTO messageDTO) {
         DiscussionThread thread=threadRepository.findById(threadId)
-                .orElseThrow(()->new RuntimeException("Thread not found with Id: "+threadId));
+                .orElseThrow(()->new ResourcesNotFound("Thread not found with Id: "+threadId));
         Users user=userRepository.findById(messageDTO.getUserId())
-                .orElseThrow(()->new RuntimeException("User not found ."));
+                .orElseThrow(()->new ResourcesNotFound("User not found ."));
 
         Discussions message= new Discussions();
         message.setThread(thread);

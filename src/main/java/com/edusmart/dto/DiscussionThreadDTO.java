@@ -1,12 +1,19 @@
 package com.edusmart.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 
 public class DiscussionThreadDTO {
     private Long threadId;
+    @NotNull(message = "Course Id is required")
     private Long courseId;
+
     private Long createdBy;
+    @NotBlank(message = "Title is required")
     private String title;
+
     private LocalDateTime createdAt;
 
     public Long getThreadId() {

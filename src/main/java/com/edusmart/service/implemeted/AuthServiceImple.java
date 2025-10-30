@@ -5,6 +5,7 @@ import com.edusmart.dto.LoginRequestDTO;
 import com.edusmart.dto.UserDTO;
 import com.edusmart.entity.Roles;
 import com.edusmart.entity.Users;
+import com.edusmart.exception.ResourcesNotFound;
 import com.edusmart.repository.UserRepository;
 import com.edusmart.security.JwtTokenProvider;
 import com.edusmart.service.AuthService;
@@ -45,7 +46,7 @@ public class AuthServiceImple implements AuthService {
 
         UserDetails userDetails=(UserDetails) authentication.getPrincipal();
         Users user =userRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(()->new RuntimeException("Email is not registered"));
+                .orElseThrow(()->new ResourcesNotFound("Email is not registered"));
         List<String> roles=user.getRoles()
                 .stream()
                 .map(Roles::getName)

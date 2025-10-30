@@ -1,13 +1,25 @@
 package com.edusmart.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDateTime;
 
 public class NotificationDTO {
     private Long notificationId;
+    @NotNull(message = "User Id is required")
     private Long userId;
-    private String Title;
+
+    @NotBlank(message = "Title is required")
+    @Size(min = 3,max = 100,message = "The Title length must be in 3 and 100")
+    private String title;
+    @NotBlank(message = "Message is required")
+    @Size(max = 200,message = "The Message length should be in 200")
     private String message;
+    @NotBlank(message = "Notification Type is required")
     private String type;
+    @NotNull(message = "Read status is required")
     private boolean read;
     private LocalDateTime createdAt;
 
@@ -28,11 +40,11 @@ public class NotificationDTO {
     }
 
     public String getTitle() {
-        return Title;
+        return title;
     }
 
     public void setTitle(String title) {
-        Title = title;
+        this.title = title;
     }
 
     public String getMessage() {

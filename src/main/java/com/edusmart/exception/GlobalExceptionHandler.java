@@ -1,12 +1,16 @@
 package com.edusmart.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.security.SignatureException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GlobalExceptionHandler {
 
@@ -32,10 +36,30 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error,HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String,String>> handleValidationErrors(MethodArgumentNotValidException ex){
+        Map<String,String> errors=new HashMap<>();
+        ex.getBindingResult().getFieldErrors()
+                .forEach(error->errors.put(error.getField(),error.getDefaultMessage()));
+        return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
+    }
+
     //
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiException> handleGeneric(Exception e){
         ApiException error=new ApiException("Internal Server Error",HttpStatus.INTERNAL_SERVER_ERROR);
         return new ResponseEntity<>(error,HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(ResourcesNotFound.class)
+    public ResponseEntity<ApiException> handleResourceNotFound(ResourcesNotFound e){
+        ApiException exception=new ApiException(e.getMessage(),HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(exception,HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiException> handleDataIntegrityException(DataIntegrityViolationException ex){
+        ApiException error= new ApiException("Data integrity violation : "+ex.getMostSpecificCause().getMessage(),HttpStatus.CONFLICT);
+        return new ResponseEntity<>(error,HttpStatus.CONFLICT);
     }
 }

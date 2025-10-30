@@ -2,6 +2,7 @@ package com.edusmart.service.implemeted;
 
 import com.edusmart.dto.CategoryDTO;
 import com.edusmart.entity.Categories;
+import com.edusmart.exception.ResourcesNotFound;
 import com.edusmart.repository.CategoryRepository;
 import com.edusmart.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class CategoryServiceImple implements CategoryService {
     @Override
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
         if(categoryRepository.existsByName(categoryDTO.getName())){
-            throw new RuntimeException("Category with name "+categoryDTO.getName()+" already exists.");
+            throw new ResourcesNotFound("Category with name "+categoryDTO.getName()+" already exists.");
         }
         Categories category=mapToEntity(categoryDTO);
         Categories saved=categoryRepository.save(category);
@@ -36,7 +37,7 @@ public class CategoryServiceImple implements CategoryService {
 
     @Override
     public CategoryDTO getCategoryById(Long id) {
-        Categories category=categoryRepository.findById(id).orElseThrow(()->new RuntimeException("Category does not exists with id: "+id));
+        Categories category=categoryRepository.findById(id).orElseThrow(()->new ResourcesNotFound("Category does not exists with id: "+id));
 
         return mapToDTO(category);
     }
@@ -44,7 +45,7 @@ public class CategoryServiceImple implements CategoryService {
     @Override
     public void deleteCategory(Long id) {
         if(!categoryRepository.existsById(id)){
-            throw new RuntimeException("The Category with id: "+id+" Does not exists");
+            throw new ResourcesNotFound("The Category with id: "+id+" Does not exists");
         }
         categoryRepository.deleteById(id);
     }

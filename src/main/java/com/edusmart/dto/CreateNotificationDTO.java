@@ -1,9 +1,17 @@
 package com.edusmart.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public class CreateNotificationDTO {
     private Long userId;
+    @NotBlank(message = "Title cannot be blank")
+    @Size(min = 3,max = 100,message = "The title should be in 3 and 100 length")
     private String title;
+    @Size(max = 200,message = "Message length should under 200")
     private String message;
+    @NotBlank(message = "Notification cannot be blank !")
     private String type;
 
     public Long getUserId() {

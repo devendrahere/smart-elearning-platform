@@ -1,8 +1,13 @@
 package com.edusmart.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
 public class UserSummaryDTO {
     private Long userId;
+    @NotBlank(message = "Name is required")
     private String name;
+    @Email(message = "Email needs to be valid")
     private String email;
 
     public String getName() {

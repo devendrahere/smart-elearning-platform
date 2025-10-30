@@ -4,6 +4,7 @@ import com.edusmart.dto.RoleDTO;
 import com.edusmart.dto.UserDTO;
 import com.edusmart.entity.Roles;
 import com.edusmart.entity.Users;
+import com.edusmart.exception.ResourcesNotFound;
 import com.edusmart.repository.RoleRepository;
 import com.edusmart.repository.UserRepository;
 import com.edusmart.service.UserService;
@@ -28,7 +29,7 @@ public class UserServiceImple implements UserService {
     @Override
     public UserDTO createUser(UserDTO userDTO) {
         if(userRepository.existsByEmail(userDTO.getEmail()))
-                throw  new RuntimeException("Email already registered");
+                throw  new ResourcesNotFound("Email already registered");
 
         Users user =mapToEntity(userDTO);
         user.setCreatedAt(LocalDateTime.now());
@@ -40,7 +41,7 @@ public class UserServiceImple implements UserService {
     @Override
     public UserDTO getUserById(Long userId) {
         Users users=userRepository.findById(userId).
-                orElseThrow(()-> new RuntimeException("User Not Found"));
+                orElseThrow(()-> new ResourcesNotFound("User Not Found"));
         return mapToDTO(users);
     }
 
@@ -55,7 +56,7 @@ public class UserServiceImple implements UserService {
     @Override
     public UserDTO updateUser(Long userId, UserDTO updatedUser) {
         Users users=userRepository.findById(userId)
-                .orElseThrow(()->new RuntimeException("User Not Found"));
+                .orElseThrow(()->new ResourcesNotFound("User Not Found"));
         users.setUpdatedAt(LocalDateTime.now());
         users.setUsername(updatedUser.getUsername());
         users.setEmail(updatedUser.getEmail());
@@ -79,7 +80,7 @@ public class UserServiceImple implements UserService {
         if(dto.getRoles()!=null){
             dto.getRoles().forEach(r->{
                 Roles role=roleRepository.findById((long) r.getRoleId())
-                        .orElseThrow(()->new RuntimeException("Role not Found "+r.getRoleId()));
+                        .orElseThrow(()->new ResourcesNotFound("Role not Found "+r.getRoleId()));
                 roles.add(role);
             });
         }

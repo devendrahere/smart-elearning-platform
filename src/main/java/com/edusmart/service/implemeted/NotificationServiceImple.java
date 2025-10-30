@@ -4,6 +4,7 @@ import com.edusmart.dto.CreateNotificationDTO;
 import com.edusmart.dto.NotificationDTO;
 import com.edusmart.entity.Notification;
 import com.edusmart.entity.Users;
+import com.edusmart.exception.ResourcesNotFound;
 import com.edusmart.repository.NotificationRepository;
 import com.edusmart.repository.UserRepository;
 import com.edusmart.service.NotificationService;
@@ -31,7 +32,7 @@ public class NotificationServiceImple implements NotificationService {
     @Override
     public NotificationDTO createNotification(CreateNotificationDTO notificationDTO) {
         Users user= userRepository.findById(notificationDTO.getUserId())
-                .orElseThrow(()->new RuntimeException("User not found by id: "+notificationDTO.getUserId()));
+                .orElseThrow(()->new ResourcesNotFound("User not found by id: "+notificationDTO.getUserId()));
 
         Notification notification= new Notification();
         notification.setCreatedAt(LocalDateTime.now());
@@ -65,7 +66,7 @@ public class NotificationServiceImple implements NotificationService {
     @Override
     public NotificationDTO markAsRead(Long notificationId) {
         Notification notification= notificationRepository.findById(notificationId)
-                .orElseThrow(()->new RuntimeException("Notification not found with id: "+notificationId));
+                .orElseThrow(()->new ResourcesNotFound("Notification not found with id: "+notificationId));
         notification.setRead(true);
         Notification updated=notificationRepository.save(notification);
         return mapToDTO(updated);
@@ -82,7 +83,7 @@ public class NotificationServiceImple implements NotificationService {
     @Override
     public void deleteNotification(Long notificationId) {
         if(!notificationRepository.existsById(notificationId)){
-            throw  new RuntimeException("No notification found with id: "+notificationId);
+            throw  new ResourcesNotFound("No notification found with id: "+notificationId);
         }
         notificationRepository.deleteById(notificationId);
     }
