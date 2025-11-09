@@ -10,9 +10,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -23,38 +25,57 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
+    private static final List<String> PUBLIC_PATHS = List.of(
+            "/",
+            "/home",
+            "/login",
+            "/register",
+            "/api/auth/**",
+            "/api/test/public/**",
+            "/courses/**",
+            "/lessons/**",
+            "/js/**",
+            "/css/**",
+            "/images/**",
+            "/ws/**",
+            "/sockjs/**"
+    );
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        //
-        String path=request.getRequestURI();
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
-        if(path.startsWith("^/api/auth(/.*)?$")|| path.startsWith("^/api/test/public(/.*)$")){
-            System.out.println("Incoming path: " + path);
-            filterChain.doFilter(request,response);
-            return;
-        }
-        String header=request.getHeader("Authorization");
+        String path = request.getRequestURI();
 
-
-        String token=null;
-        String username=null;
-
-        if(header !=null &&  header.startsWith("Bearer ")){
-            token =header.substring(7);
-            username=jwtTokenProvider.extractUsername(token);
+        // ✅ Skip JWT validation for public endpoints
+        for (String pattern : PUBLIC_PATHS) {
+            if (pathMatcher.match(pattern, path)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
         }
 
-        if(username != null && SecurityContextHolder.getContext().getAuthentication()==null){
-            UserDetails userDetails= userDetailsService.loadUserByUsername(username);
-            if(jwtTokenProvider.validateToken(token, userDetails)){
-                UsernamePasswordAuthenticationToken authenticationToken=new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
+        // ✅ Continue with JWT validation for protected routes
+        String header = request.getHeader("Authorization");
+        String token = null;
+        String username = null;
+
+        if (header != null && header.startsWith("Bearer ")) {
+            token = header.substring(7);
+            username = jwtTokenProvider.extractUsername(token);
+        }
+
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if (jwtTokenProvider.validateToken(token, userDetails)) {
+                UsernamePasswordAuthenticationToken authenticationToken =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
         }
-        filterChain.doFilter(request,response);
+
+        filterChain.doFilter(request, response);
     }
 }
-//this is jwt token file

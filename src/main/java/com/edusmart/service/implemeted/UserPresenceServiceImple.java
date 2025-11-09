@@ -3,10 +3,12 @@ package com.edusmart.service.implemeted;
 import com.edusmart.service.UserPresenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
 
 import java.lang.Object;
 import java.util.Set;
 
+@Service
 public class UserPresenceServiceImple implements UserPresenceService {
 
     @Autowired

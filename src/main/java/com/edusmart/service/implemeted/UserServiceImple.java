@@ -69,6 +69,12 @@ public class UserServiceImple implements UserService {
         userRepository.deleteById(userId);
     }
 
+    @Override
+    public UserDTO getUserByUsername(String username) {
+        Users user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new ResourcesNotFound("User not found with email: " + username));
+        return mapToDTO(user);
+    }
     //mapping helpers
 
     private Users mapToEntity(UserDTO dto){

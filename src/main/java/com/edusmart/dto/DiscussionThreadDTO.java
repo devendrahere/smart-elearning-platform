@@ -14,6 +14,9 @@ public class DiscussionThreadDTO {
     @NotBlank(message = "Title is required")
     private String title;
 
+    private String createdByName;
+
+
     private LocalDateTime createdAt;
 
     public Long getThreadId() {
@@ -54,5 +57,13 @@ public class DiscussionThreadDTO {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getCreatedByName() {
+        return createdByName;
+    }
+
+    public void setCreatedByName(String createdByName) {
+        this.createdByName = createdByName;
     }
 }

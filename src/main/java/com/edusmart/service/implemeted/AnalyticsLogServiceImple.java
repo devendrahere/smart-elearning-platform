@@ -11,11 +11,13 @@ import com.edusmart.repository.CourseRepository;
 import com.edusmart.repository.UserRepository;
 import com.edusmart.service.AnalyticsLogService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class AnalyticsLogServiceImple implements AnalyticsLogService {
 
     @Autowired

@@ -19,6 +19,17 @@ public class PlatformOverviewDTO {
     private Long totalCompletion;
     @NotNull(message = "Top courses are required")
     private List<String> topCourses;
+    @PositiveOrZero(message = "Active sessions cannot be negative")
+    private Long activeSessions = 0L;
+
+    public Long getActiveSessions() {
+        return activeSessions;
+    }
+
+    public void setActiveSessions(Long activeSessions) {
+        this.activeSessions = activeSessions;
+    }
+
 
     private LocalDateTime timestamp;
 

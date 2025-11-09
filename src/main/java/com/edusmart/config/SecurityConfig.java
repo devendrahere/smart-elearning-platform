@@ -32,23 +32,33 @@ public class SecurityConfig {
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors->cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth->auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/test/public").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("SUPER_ADMIN")
-                        .requestMatchers("/api/instructor/**").hasRole("INSTRUCTOR")
-                        .requestMatchers("/api/student/**").hasRole("STUDENT")
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/", "/home", "/register", "/login", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasAuthority("SUPER_ADMIN")
+                        .requestMatchers("/api/instructor/**").hasAuthority("INSTRUCTOR")
+                        .requestMatchers("/api/student/**").hasAuthority("STUDENT")
                         .anyRequest().authenticated()
+                )
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/courses", true)
+                        .failureUrl("/login?error=true")
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .permitAll()
                 );
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder(){

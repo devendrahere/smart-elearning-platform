@@ -36,7 +36,7 @@ public class CertificateServiceImple implements CertificateService {
         Courses course=courseRepository.findById(courseId)
                 .orElseThrow(()->new ResourcesNotFound("Course not found with id: "+courseId));
 
-        boolean exists=certificateRepository.existsByUserIdAndCourseId(userId,courseId);
+        boolean exists=certificateRepository.existsByUserUserIdAndCourseCourseId(userId,courseId);
         if(exists){
             throw new IllegalStateException("Certificate with user and course already exists");
         }
@@ -53,7 +53,7 @@ public class CertificateServiceImple implements CertificateService {
 
     @Override
     public List<CertificateDTO> getUsersCertificates(Long userId) {
-        return certificateRepository.findByUserId(userId)
+        return certificateRepository.findByUserUserId(userId)
                 .stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
