@@ -1,5 +1,6 @@
 package com.edusmart.service;
 
+import com.edusmart.dto.QuestionDTO;
 import com.edusmart.dto.QuizAttemptDTO;
 import com.edusmart.dto.QuizDTO;
 import com.edusmart.dto.QuizResultDTO;
@@ -14,4 +15,5 @@ public interface QuizService {
     List<QuizDTO> getAllQuizzes();
     QuizResultDTO attemptQuiz(Long quizId, QuizAttemptDTO quizAttempt);
     List<QuizResultDTO> getResultByUser(Long userId);
+    List<QuestionDTO> getQuestionsByQuizId(Long quizId);
 }

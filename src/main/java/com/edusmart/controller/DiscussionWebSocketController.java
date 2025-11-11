@@ -20,13 +20,12 @@ public class DiscussionWebSocketController {
     private DiscussionService discussionService;
 
     @MessageMapping("/discussion/{threadId}")
-    public void sendMessage(
-            @DestinationVariable Long threadId,
-            @Payload DiscussionDTO message
-            ){
-        DiscussionDTO saved= discussionService.postMessage(threadId,message);
-
-        messagingTemplate.convertAndSend("/topic/discussion/"+threadId,saved);
+    public void sendMessage(@DestinationVariable Long threadId, @Payload DiscussionDTO message) {
+        if (message.getUserId() == null || message.getUsername() == null || message.getUsername().isBlank()) {
+            return; // Ignore invalid messages instead of throwing exception
+        }
+        DiscussionDTO saved = discussionService.postMessage(threadId, message);
+        messagingTemplate.convertAndSend("/topic/discussion/" + threadId, saved);
     }
 
 
@@ -36,4 +35,5 @@ public class DiscussionWebSocketController {
             @Payload String threadTitle){
         messagingTemplate.convertAndSend("/topic/course/"+courseId+"/threads",threadTitle);
     }
+
 }

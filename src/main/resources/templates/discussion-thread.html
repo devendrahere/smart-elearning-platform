@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${thread.title}">Discussion Thread</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #F6F6F6;
+            font-family: 'Poppins', sans-serif;
+            color: #000;
+        }
+
+        .container {
+            margin-top: 60px;
+            max-width: 900px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            border-radius: 20px;
+            border: 1px solid rgba(162, 213, 198, 0.5);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+        }
+
+        .chat-box {
+            max-height: 500px;
+            overflow-y: auto;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+        }
+
+        .message {
+    margin-bottom: 15px;
+    padding: 10px 15px 8px 15px;
+    border-radius: 12px;
+    background: #f1f1f1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    word-wrap: break-word;
+}
+
+.msg-self {
+    background: #CFFFE2;
+    text-align: right;
+    align-items: flex-end;
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.message strong {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.message small {
+    color: #666;
+    font-size: 0.8rem;
+}
+
+.btn-delete {
+    background: transparent;
+    border: none;
+    color: #c0392b;
+    font-size: 1rem;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.btn-delete:hover {
+    color: #e74c3c;
+}
+
+
+        .btn-outline-danger.btn-sm {
+            border-radius: 10px;
+            font-size: 0.9rem;
+            padding: 6px 12px;
+        }
+
+        .section-divider {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            margin: 1.5rem 0;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="fragments/header :: header"></th:block>
+
+<div class="container">
+    <div class="glass-card">
+        <!-- Title and Thread Delete Button -->
+        <div class="d-flex justify-content-between align-items-center">
+            <h3 th:text="${thread.title}">Discussion Thread</h3>
+
+            <!-- Only visible to thread creator -->
+            <!-- Only thread creator can see this -->
+            <button th:if="${isThreadOwner}"
+                    class="btn btn-outline-danger btn-sm"
+                    th:onclick="|deleteThread(${thread.threadId})|">
+                Delete Thread
+            </button>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- Chat Messages -->
+        <div id="chatBox" class="chat-box">
+            <div th:each="msg : ${messages}"
+                 class="message"
+                 th:classappend="${msg.userId == userId} ? ' msg-self' : ''"
+                 th:attr="data-discussion-id=${msg.discussionId}">
+
+                <div class="message-header">
+                    <strong th:text="${msg.username}">User</strong>
+                    <button th:if="${(msg.userId == userId) or isInstructor}"
+                            class="btn-delete"
+                            th:attr="data-discussion-id=${msg.discussionId}"
+                            onclick="deleteMessage(this)">✖</button>
+                </div>
+
+                <p th:text="${msg.content}" class="mb-1"></p>
+                <small th:text="${#temporals.format(msg.createdAt, 'dd MMM yyyy HH:mm')}"></small>
+            </div>
+        </div>
+        <!-- Input for Sending Messages -->
+        <div class="input-group mt-3">
+            <input id="messageInput" type="text" class="form-control" placeholder="Write a message...">
+            <button id="sendBtn" class="btn-glass">Send</button>
+        </div>
+
+        <!-- Back Button -->
+        <div class="mt-4 d-flex justify-content-between">
+            <a th:href="@{'/discussion/course/' + ${thread.courseId}}" class="btn btn-outline-secondary">← Back to Threads</a>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="fragments/footer :: footer"></th:block>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+        const threadId = /*[[${thread != null ? thread.threadId : 0}]]*/ 0;
+        const userId = /*[[${userId != null ? userId : 'null'}]]*/ null;
+        const username = /*[['' + (${username} ?: 'Anonymous')]]*/ 'Anonymous';
+        const courseId = /*[[${thread != null ? thread.courseId : 0}]]*/ 0;
+        const isInstructor = /*[[${isInstructor}]]*/ false;
+        const isThreadOwner = /*[[${isThreadOwner}]]*/ false;
+
+        let stompClient = null;
+
+        function connect() {
+            const socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function () {
+                stompClient.subscribe(`/topic/discussion/${threadId}`, function (message) {
+                    const msg = JSON.parse(message.body);
+                    appendMessage(msg);
+                });
+            }, function (error) {
+                console.error("STOMP connection error:", error);
+            });
+        }
+
+        function appendMessage(msg) {
+            const chat = document.getElementById('chatBox');
+            const div = document.createElement('div');
+            div.className = 'message';
+            if (msg.userId && userId && Number(msg.userId) === Number(userId)) {
+                div.classList.add('msg-self');
+            }
+            const showDelete = (msg.userId && userId && Number(msg.userId) === Number(userId)) || isInstructor;
+            div.innerHTML = `
+                ${showDelete ? `<button class="btn-delete" data-discussion-id="${msg.discussionId}" onclick="deleteMessage(this)">✖</button>` : ''}
+                <strong>${msg.username}</strong>
+                <p class="mb-1">${msg.content}</p>
+                <small>${new Date(msg.createdAt).toLocaleString()}</small>
+            `;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        document.getElementById('sendBtn').addEventListener('click', () => {
+            const content = document.getElementById('messageInput').value.trim();
+            if (!content) return;
+
+            if (userId === null || userId === 'null') {
+                alert('You must be logged in to post messages.');
+                window.location.href = '/login';
+                return;
+            }
+
+            const msg = {
+                content: content,
+                userId: Number(userId),
+                username: username,
+                threadId: Number(threadId),
+                courseId: Number(courseId)
+            };
+
+            try {
+                stompClient.send(`/app/discussion/${threadId}`, {}, JSON.stringify(msg));
+                document.getElementById('messageInput').value = '';
+            } catch (err) {
+                console.error('Failed to send stomp message', err);
+            }
+        });
+
+        async function deleteMessage(btn) {
+            const discussionId = btn.getAttribute('data-discussion-id');
+            if (!confirm('Are you sure you want to delete this message?')) return;
+
+            const resp = await fetch(`/api/discussions/${discussionId}`, {
+                method: 'DELETE',
+                credentials: 'same-origin'
+            });
+
+            if (resp.status === 204) {
+                btn.closest('.message').remove();
+            } else if (resp.status === 403) {
+                alert('You are not allowed to delete this message.');
+            } else if (resp.status === 401) {
+                alert('Please log in to delete messages.');
+                window.location.href = '/login';
+            } else {
+                alert('Something went wrong.');
+            }
+        }
+
+        async function deleteThread(threadId) {
+            if (!confirm('Are you sure you want to delete this entire thread?')) return;
+
+            const resp = await fetch(`/api/discussions/thread/${threadId}`, {
+                method: 'DELETE',
+                credentials: 'same-origin'
+            });
+
+            if (resp.status === 204) {
+                alert('Thread deleted successfully.');
+                window.location.href = `/discussion/course/${courseId}`;
+            } else if (resp.status === 403) {
+                alert('You are not allowed to delete this thread.');
+            } else if (resp.status === 401) {
+                alert('Please log in to delete this thread.');
+                window.location.href = '/login';
+            } else {
+                alert('Something went wrong.');
+            }
+        }
+
+        connect();
+    /*]]>*/
+</script>
+</body>
+</html>

@@ -87,15 +87,30 @@
 
         <div class="section-divider"></div>
 
-        <h4>Lessons</h4>
-        <ul>
-            <li th:each="lesson : ${lessons}">
-                <a th:href="@{/lesson/{id}(id=${lesson.lessonId})}" th:text="${lesson.lessonTitle}"></a>
-            </li>
-        </ul>
+        <!-- ✅ Enrolled Student View -->
+        <div th:if="${enrolled and !isInstructor}">
+            <h4>Ready to Learn?</h4>
+            <p class="text-muted">You’re enrolled in this course. Click below to begin your lessons.</p>
+            <a th:href="@{'/courses/' + ${course.courseId} + '/lessons'}" class="btn-glass">Start Course</a>
+        </div>
+
+        <!-- ✅ Instructor View -->
+        <div th:if="${isInstructor}">
+            <h4>Instructor Controls</h4>
+            <p class="text-muted">Manage lessons, materials, and announcements for this course.</p>
+            <a th:href="@{'/courses/' + ${course.courseId} + '/lessons/manage'}" class="btn-glass">Manage Lessons</a>
+        </div>
+
+        <!-- ✅ Non-Enrolled Student -->
+        <div th:if="${!enrolled and !isInstructor}" class="mt-4">
+            <form method="post" th:action="@{/courses/{id}/enroll(id=${course.courseId})}">
+                <button class="btn-glass">Enroll Now</button>
+            </form>
+        </div>
 
         <div class="section-divider"></div>
 
+        <!-- Keep Announcements -->
         <h4>Announcements</h4>
         <ul>
             <li th:each="a : ${announcements}" th:text="${a.message}"></li>
@@ -103,15 +118,35 @@
 
         <div class="section-divider"></div>
 
-        <h4>Enrolled Students</h4>
-        <ul>
-            <li th:each="s : ${students}" th:text="${s.username}"></li>
-        </ul>
+        <!-- Show enrolled students only for instructors -->
+        <div th:if="${isInstructor}">
+            <h4>Enrolled Students</h4>
+            <ul>
+                <li th:each="s : ${students}" th:text="${s.username}"></li>
+            </ul>
+        </div>
 
         <div class="section-divider"></div>
 
+        <!-- ✅ Show last quiz result if attempted -->
+        <div th:if="${lastResult != null and !isInstructor}">
+            <h4>Last Quiz Result</h4>
+            <p><strong>Score:</strong> <span th:text="${lastResult.score} + ' / 100'">85 / 100</span></p>
+            <p><strong>Status:</strong>
+                <span th:text="${lastResult.passed ? 'Passed 🎉' : 'Failed ❌'}"
+                      th:classappend="${lastResult.passed ? 'text-success' : 'text-danger'}"></span>
+            </p>
+            <a th:href="@{'/quizzes/' + ${lastResult.quizId}}"
+               class="btn-glass mt-2">View Quiz Details</a>
+        </div>
+
+
+        <div class="section-divider"></div>
+
+
         <h4>Online Presence</h4>
         <p>Online Students: <span id="onlineCount" class="fw-bold">0</span></p>
+        <a th:href="@{'/discussion/course/' + ${course.courseId}}" class="btn-glass mt-3">💬 Course Discussions</a>
     </div>
 </div>
 

@@ -14,7 +14,7 @@ public class Question {
     @JoinColumn(name = "quiz_id",nullable = false)
     private Quiz quiz;
 
-    @Column(name = "question_tex")
+    @Column(name = "question_text")
     private String questionText;
 
     @Column(name = "option_a")

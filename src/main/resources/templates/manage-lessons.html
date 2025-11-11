@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Lessons & Quiz - EduSmart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #F6F6F6;
+            font-family: 'Poppins', sans-serif;
+            color: #000;
+        }
+        .container {
+            margin-top: 60px;
+            max-width: 900px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(162, 213, 198, 0.5);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
+        }
+        .btn-glass {
+            background-color: #A2D5C6;
+            border: none;
+            color: #000;
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-glass:hover {
+            background-color: #CFFFE2;
+            transform: translateY(-2px);
+        }
+        .quiz-section {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(162, 213, 198, 0.3);
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{fragments/header :: header}"></th:block>
+
+<div class="container">
+    <div class="glass-card">
+        <h3>Manage Lessons for <span th:text="${course.courseTitle}">Course</span></h3>
+
+        <!-- LESSON MANAGEMENT -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <a th:href="@{'/courses/' + ${course.courseId}}" class="btn btn-secondary btn-sm">← Back</a>
+            <a th:href="@{'/lesson/add/' + ${course.courseId}}" class="btn-glass">➕ Add Lesson</a>
+        </div>
+
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Order</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="lesson, iterStat : ${lessons}">
+                <td th:text="${iterStat.index + 1}"></td>
+                <td th:text="${lesson.lessonTitle}"></td>
+                <td th:text="${lesson.lessonOrder}"></td>
+                <td>
+                    <a th:href="@{'/lesson/edit/' + ${lesson.lessonId}}" class="btn btn-sm btn-outline-primary">✏️ Edit</a>
+                    <button type="button"
+                            class="btn btn-sm btn-outline-danger"
+                            data-bs-toggle="modal"
+                            th:attr="data-bs-target='#deleteModal' + ${lesson.lessonId}">
+                        🗑 Delete
+                    </button>
+
+                    <!-- Delete Confirmation Modal -->
+                    <div class="modal fade" th:id="'deleteModal' + ${lesson.lessonId}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Confirm Delete</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete "<strong th:text="${lesson.lessonTitle}"></strong>"?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <form th:action="@{'/lesson/delete/' + ${lesson.lessonId}}" method="post">
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- QUIZ MANAGEMENT SECTION -->
+        <div class="quiz-section mt-5">
+            <h4>Course Quiz</h4>
+
+            <div th:if="${quiz != null}" class="mt-3">
+                <p><strong th:text="${quiz.quizTitle}">Quiz Title</strong></p>
+                <p class="text-muted" th:text="${quiz.description}">Quiz Description</p>
+                <a th:href="@{'/quiz/manage/' + ${course.courseId} + '/' + ${quiz.quizId}}" class="btn-glass">✏️ Edit Quiz</a>
+            </div>
+
+            <div th:if="${quiz == null}" class="mt-3">
+                <p class="text-muted">No quiz has been added for this course yet.</p>
+                <a th:href="@{'/quiz/manage/' + ${course.courseId}}" class="btn-glass">➕ Add Quiz</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/footer :: footer}"></th:block>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -15,6 +15,7 @@ public class LessonDTO {
     @NotBlank(message = "content URL is required")
     private String contentUrl;
 
+    private Long courseId;
     @NotNull(message = "Lesson order is required")
     @Positive(message = "Lesson order must be a positive number")
     private int lessonOrder;
@@ -67,5 +68,13 @@ public class LessonDTO {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Long getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
     }
 }

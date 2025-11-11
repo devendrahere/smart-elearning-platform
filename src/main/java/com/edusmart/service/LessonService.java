@@ -1,6 +1,7 @@
 package com.edusmart.service;
 
 import com.edusmart.dto.LessonDTO;
+import com.edusmart.entity.Courses;
 
 import java.util.List;
 
@@ -10,4 +11,5 @@ public interface LessonService {
     List<LessonDTO> getLessonByCourse(Long courseId);
     LessonDTO updateLessonById(Long lessonId,LessonDTO lessonDTO);
     void deleteLesson(Long lessonId);
+    Courses getCourseByLessonId(Long lessonId);
 }

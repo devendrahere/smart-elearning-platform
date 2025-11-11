@@ -37,7 +37,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/home", "/register", "/login", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/", "/home", "/register", "/login",
+                                "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/courses/**").permitAll()  // ✅ allow viewing courses
                         .requestMatchers("/api/admin/**").hasAuthority("SUPER_ADMIN")
                         .requestMatchers("/api/instructor/**").hasAuthority("INSTRUCTOR")
                         .requestMatchers("/api/student/**").hasAuthority("STUDENT")

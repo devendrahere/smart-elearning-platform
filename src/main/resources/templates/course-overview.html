@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Course Overview - EduSmart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #F6F6F6;
+            font-family: 'Poppins', sans-serif;
+            color: #000;
+            min-height: 100vh;
+        }
+
+        .container {
+            margin-top: 60px;
+            max-width: 800px;
+        }
+
+        h2 {
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .overview-card {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(162, 213, 198, 0.5);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .overview-item {
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .btn-glass {
+            background-color: #A2D5C6;
+            border: none;
+            color: #000;
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btn-glass:hover {
+            background-color: #CFFFE2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(162, 213, 198, 0.3);
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{fragments/header :: header}"></th:block>
+
+<div class="container">
+    <h2>📈 Course Overview</h2>
+    <div class="overview-card">
+        <div class="overview-item"><strong>Total Users:</strong> <span th:text="${overview.totalUsers}"></span></div>
+        <div class="overview-item"><strong>Active Users:</strong> <span th:text="${overview.activeUsers}"></span></div>
+        <div class="overview-item"><strong>Total Completions:</strong> <span th:text="${overview.totalCompletion}"></span></div>
+        <div class="overview-item"><strong>Completion Rate:</strong> <span th:text="${overview.averageCompletionRate} + '%'"></span></div>
+        <div class="overview-item"><strong>Last Updated:</strong> <span th:text="${#temporals.format(overview.timestamp, 'dd MMM yyyy HH:mm')}"></span></div>
+    </div>
+    <a th:href="@{/analytics}" class="btn-glass">← Back to Courses</a>
+</div>
+
+<th:block th:replace="~{fragments/footer :: footer}"></th:block>
+</body>
+</html>

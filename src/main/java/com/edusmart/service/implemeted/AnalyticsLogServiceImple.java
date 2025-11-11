@@ -31,12 +31,12 @@ public class AnalyticsLogServiceImple implements AnalyticsLogService {
 
     @Override
     public AnalyticsLogDTO logEvent(Long userId, Long courseId, String eventType, String metadataJson) {
-        Users user=userRepository.findById(userId)
-                .orElseThrow(()-> new ResourcesNotFound(("User not found with id : "+userId)));
-        Courses course=courseRepository.findById(courseId)
-                .orElseThrow(()->new ResourcesNotFound("Course not found with id: "+courseId));
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourcesNotFound("User not found with id : " + userId));
+        Courses course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourcesNotFound("Course not found with id: " + courseId));
 
-        AnalyticsLog analyticsLog =new AnalyticsLog();
+        AnalyticsLog analyticsLog = new AnalyticsLog();
         analyticsLog.setCourse(course);
         analyticsLog.setMetadata(metadataJson);
         analyticsLog.setUser(user);
@@ -57,21 +57,24 @@ public class AnalyticsLogServiceImple implements AnalyticsLogService {
     @Override
     public PlatformOverviewDTO getCourseEngagement(Long courseId) {
 
-        Courses course=courseRepository.findById(courseId)
-                .orElseThrow(()->new ResourcesNotFound("Course not found!"));
+        Courses course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourcesNotFound("Course not found!"));
 
-        Long totalUsers=analyticsLogRepository.countDistinctUserByCourseId(courseId);
-        Long totalCompletions=analyticsLogRepository.countCompletionsByCourseId(courseId);
-        Long activeUsers=analyticsLogRepository.countActiveUsersByCourseId(courseId);
+        Long totalUsers = analyticsLogRepository.countDistinctUserByCourseId(courseId);
+        Long totalCompletions = analyticsLogRepository.countCompletionsByCourseId(courseId);
+        Long activeUsers = analyticsLogRepository.countActiveUsersByCourseId(courseId);
 
-        double completionRate=(totalUsers!=null && totalUsers>0)?((double) totalCompletions/totalUsers)*100:0.00;
+        // ✅ Safe division: avoid Infinity / NaN
+        double completionRate = (totalUsers != null && totalUsers > 0 && totalCompletions != null)
+                ? ((double) totalCompletions / totalUsers) * 100
+                : 0.00;
 
-        PlatformOverviewDTO overview=new PlatformOverviewDTO();
-        overview.setActiveUsers(activeUsers);
-        overview.setTotalUsers(totalUsers);
+        PlatformOverviewDTO overview = new PlatformOverviewDTO();
+        overview.setActiveUsers(activeUsers != null ? activeUsers : 0L);
+        overview.setTotalUsers(totalUsers != null ? totalUsers : 0L);
         overview.setTotalCourse(1L);
-        overview.setAverageCompletionRate(completionRate);
-        overview.setTotalCompletion(totalCompletions);
+        overview.setAverageCompletionRate(Double.isFinite(completionRate) ? completionRate : 0.00);
+        overview.setTotalCompletion(totalCompletions != null ? totalCompletions : 0L);
         overview.setTopCourses(null);
         overview.setTimestamp(LocalDateTime.now());
         return overview;
@@ -79,31 +82,33 @@ public class AnalyticsLogServiceImple implements AnalyticsLogService {
 
     @Override
     public PlatformOverviewDTO getPlatformOverview() {
-        Long totalUsers=userRepository.count();
-        Long activeUsers=analyticsLogRepository.countDistinctActiveUsers();
-        Long totalCourse=courseRepository.count();
-        Long totalCompletions=analyticsLogRepository.countByEventType("COURSE_COMPLETION");
+        Long totalUsers = userRepository.count();
+        Long activeUsers = analyticsLogRepository.countDistinctActiveUsers();
+        Long totalCourses = courseRepository.count();
+        Long totalCompletions = analyticsLogRepository.countByEventType("COURSE_COMPLETION");
 
-        double courseCompletionRate=(totalCourse>0)?(double) totalCourse/totalCompletions:0.00;
+        // ✅ Correct formula and safe division
+        double completionRate = (totalCompletions != null && totalCompletions > 0 && totalCourses != null && totalCourses > 0)
+                ? ((double) totalCompletions / totalCourses) * 100
+                : 0.0;
 
-        List<String> topCourses=analyticsLogRepository.findTopCoursesByEngagement();
+        List<String> topCourses = analyticsLogRepository.findTopCoursesByEngagement();
 
-        PlatformOverviewDTO dto=new PlatformOverviewDTO();
-
+        PlatformOverviewDTO dto = new PlatformOverviewDTO();
         dto.setTopCourses(topCourses);
-        dto.setTotalCompletion(totalCompletions);
-        dto.setActiveUsers(activeUsers);
-        dto.setTotalCourse(totalCourse);
+        dto.setTotalCompletion(totalCompletions != null ? totalCompletions : 0L);
+        dto.setActiveUsers(activeUsers != null ? activeUsers : 0L);
+        dto.setTotalCourse(totalCourses != null ? totalCourses : 0L);
         dto.setTimestamp(LocalDateTime.now());
-        dto.setAverageCompletionRate(courseCompletionRate);
-        dto.setTotalUsers(totalUsers);
+        dto.setAverageCompletionRate(Double.isFinite(completionRate) ? completionRate : 0.00);
+        dto.setTotalUsers(totalUsers != null ? totalUsers : 0L);
 
         return dto;
     }
-    //mapping helper
 
-    private AnalyticsLogDTO mapToDTO(AnalyticsLog entity){
-        AnalyticsLogDTO dto=new AnalyticsLogDTO();
+    // Helper mapper
+    private AnalyticsLogDTO mapToDTO(AnalyticsLog entity) {
+        AnalyticsLogDTO dto = new AnalyticsLogDTO();
         dto.setAnalyticLogId(entity.getAnalyticsId());
         dto.setCourseId(entity.getCourse().getCourseId());
         dto.setCourseTitle(entity.getCourse().getCourseTitle());
@@ -111,8 +116,6 @@ public class AnalyticsLogServiceImple implements AnalyticsLogService {
         dto.setUserId(entity.getUser().getUserId());
         dto.setMetaData(entity.getMetadata());
         dto.setEventType(entity.getEventType());
-
         return dto;
     }
-
 }

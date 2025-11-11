@@ -27,5 +27,11 @@ public class UICourseService {
     public void enrollUser(Long userId,Long courseId){
         enrollmentService.enrollStudent(userId,courseId);
     }
-
+    public List<CourseDTO> getCoursesByInstructor(Long instructorId) {
+        // Use your CourseService directly
+        return courseService.getAllCourse().stream()
+                .filter(c -> c.getInstructor() != null &&
+                        c.getInstructor().getUserId().equals(instructorId))
+                .toList();
+    }
 }

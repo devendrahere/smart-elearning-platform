@@ -75,6 +75,14 @@
            class="btn btn-outline mt-3" th:href="@{${lesson.contentUrl}}" target="_blank">Open Lesson Material</a>
     </div>
     <div class="text-center mt-4">
+        <!-- Instructor-only controls -->
+        <div th:if="${isInstructor}" class="mt-4 d-flex justify-content-center gap-3">
+            <a th:href="@{'/lesson/edit/' + ${lesson.lessonId}}" class="btn btn-warning">✏️ Edit Lesson</a>
+
+            <form th:action="@{'/lesson/delete/' + ${lesson.lessonId}}" method="post" style="display:inline;">
+                <button class="btn btn-danger" type="submit">🗑 Delete Lesson</button>
+            </form>
+        </div>
         <a href="/courses" class="btn btn-outline">← Back to Courses</a>
     </div>
 </div>

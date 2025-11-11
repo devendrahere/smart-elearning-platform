@@ -13,6 +13,7 @@ import com.edusmart.repository.DiscussionThreadRepository;
 import com.edusmart.repository.UserRepository;
 import com.edusmart.service.DiscussionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -68,11 +69,26 @@ public class DiscussionServiceImple implements DiscussionService {
                 .collect(Collectors.toList());
     }
 
+    // IMPORTANT: now requires actingUserId and enforces permission
     @Override
-    public void deleteDiscussion(Long discussionId) {
-        if(!discussionRepository.existsById(discussionId)){
-            throw  new ResourcesNotFound("No discussion found by id: "+discussionId);
+    public void deleteDiscussion(Long discussionId, Long actingUserId) {
+        Discussions discussion = discussionRepository.findById(discussionId)
+                .orElseThrow(() -> new ResourcesNotFound("No discussion found by id: " + discussionId));
+
+        // author id
+        Long authorId = discussion.getUsers().getUserId();
+
+        // course instructor id (may be null if data is inconsistent)
+        Long instructorId = null;
+        if (discussion.getCourse() != null && discussion.getCourse().getInstructor() != null) {
+            instructorId = discussion.getCourse().getInstructor().getUserId();
         }
+
+        // allow delete if acting user is author OR course instructor
+        if (!actingUserId.equals(authorId) && (instructorId == null || !actingUserId.equals(instructorId))) {
+            throw new AccessDeniedException("You don't have permission to delete this discussion.");
+        }
+
         discussionRepository.deleteById(discussionId);
     }
 
@@ -128,6 +144,29 @@ public class DiscussionServiceImple implements DiscussionService {
         return mapToDTO(saved);
     }
 
+    @Override
+    public DiscussionThreadDTO getThreadById(Long threadId) {
+        DiscussionThread thread = threadRepository.findById(threadId)
+                .orElseThrow(() -> new ResourcesNotFound("Thread not found with id: " + threadId));
+        return mapToThreadDTO(thread);
+    }
+
+
+    @Override
+    public void deleteThread(Long threadId, Long actingUserId) {
+        DiscussionThread thread = threadRepository.findById(threadId)
+                .orElseThrow(() -> new ResourcesNotFound("No thread found with id: " + threadId));
+
+        Long creatorId = thread.getCreatedBy().getUserId();
+
+        //  Only allow delete if the current user is the creator
+        if (!creatorId.equals(actingUserId)) {
+            throw new AccessDeniedException("You don't have permission to delete this thread.");
+        }
+
+        threadRepository.delete(thread);
+    }
+
     //mapping helper
     private DiscussionDTO mapToDTO(Discussions discussions){
         DiscussionDTO dto=new DiscussionDTO();
@@ -136,6 +175,9 @@ public class DiscussionServiceImple implements DiscussionService {
         dto.setCreatedAt(discussions.getCreatedAt());
         dto.setUsername(discussions.getUsers().getUsername());
         dto.setCourseId(discussions.getCourse().getCourseId());
+        // IMPORTANT: expose userId and threadId for UI and permission checks
+        dto.setUserId(discussions.getUsers().getUserId());
+        dto.setThreadId(discussions.getThread() != null ? discussions.getThread().getThreadId() : null);
 
         return dto;
     }
@@ -147,6 +189,8 @@ public class DiscussionServiceImple implements DiscussionService {
         dto.setCourseId(thread.getCourse().getCourseId());
         dto.setThreadId(thread.getThreadId());
         dto.setCreatedAt(thread.getCreatedAt());
+        // optional: set createdByName if you want
+        dto.setCreatedByName(thread.getCreatedBy() != null ? thread.getCreatedBy().getUsername() : null);
 
         return dto;
     }

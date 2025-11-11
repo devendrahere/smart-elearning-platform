@@ -76,6 +76,13 @@ public class LessonServiceImple implements LessonService {
         lessonRepository.deleteById(lessonId);
     }
 
+    @Override
+    public Courses getCourseByLessonId(Long lessonId){
+        Lessons lesson=lessonRepository.findById(lessonId)
+                .orElseThrow(()-> new ResourcesNotFound("Lesson not found"));
+        return lesson.getCourses();
+    }
+
     //mapping helper
 
     private LessonDTO mapToDTO(Lessons lesson){
@@ -86,6 +93,7 @@ public class LessonServiceImple implements LessonService {
         dto.setLessonOrder(lesson.getLessonOrder());
         dto.setContentUrl(lesson.getContentUrl());
         dto.setUpdatedAt(lesson.getUpdatedAt());
+        dto.setCourseId(lesson.getCourses().getCourseId());
         return dto;
     }
 
@@ -94,6 +102,7 @@ public class LessonServiceImple implements LessonService {
         lesson.setLessonTitle(dto.getLessonTitle());
         lesson.setLessonOrder(dto.getLessonOrder());
         lesson.setContentUrl(dto.getContentUrl());
+
 
         return lesson;
     }
