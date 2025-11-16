@@ -25,12 +25,12 @@ public class AnnouncementController {
 
     @PostMapping("/{courseId}")
     public ResponseEntity<AnnouncementDTO> createAnnouncement(
-            @PathVariable Long courseID,
+            @PathVariable Long courseId,
             @RequestParam Long instructorId,
             @RequestParam String message
     ){
-            AnnouncementDTO saved= announcementService.createAnnouncement(courseID,message,instructorId);
-            simpMessagingTemplate.convertAndSend("/topic/announcement/"+courseID,saved);
+            AnnouncementDTO saved= announcementService.createAnnouncement(courseId,message,instructorId);
+            simpMessagingTemplate.convertAndSend("/topic/announcement/"+courseId,saved);
             return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 

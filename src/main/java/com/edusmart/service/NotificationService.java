@@ -10,7 +10,7 @@ import java.util.List;
 public interface NotificationService {
     NotificationDTO createNotification(CreateNotificationDTO notificationDTO);
     List<NotificationDTO> getNotificationForUser(Long userId);
-    NotificationDTO markAsRead(Long notificationId);
+    NotificationDTO markAsRead(Long notificationId,Long userId);
     void markAllAsRead(Long userId);
     void deleteNotification(Long notificationId);
 }

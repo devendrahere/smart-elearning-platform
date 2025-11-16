@@ -1,0 +1,132 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, #F6F6F6 0%, #E8F5F1 100%);
+    font-family: 'Poppins', sans-serif;
+    color: #2C3E50;
+    min-height: 100vh;
+}
+
+.container {
+    margin-top: 40px;
+    margin-bottom: 60px;
+    max-width: 900px;
+}
+
+/* Page Header */
+.page-header {
+    background: white;
+    border-radius: 24px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    border: 1px solid rgba(162, 213, 198, 0.2);
+    text-align: center;
+}
+
+.page-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.page-subtitle {
+    color: #7D8B9A;
+    font-size: 1.05rem;
+}
+
+/* Announcement Card */
+.announcement-card {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    border-left: 5px solid #A2D5C6;
+    transition: all 0.3s ease;
+    animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.announcement-card:hover {
+    transform: translateX(5px);
+    box-shadow: 0 6px 25px rgba(0,0,0,0.1);
+    border-left-color: #8FC4B3;
+}
+
+.announcement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.announcement-author {
+    font-weight: 600;
+    color: #2C3E50;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.announcement-author::before {
+    content: "👤";
+    font-size: 1.2rem;
+}
+
+.announcement-time {
+    color: #9BA8B7;
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.announcement-message {
+    color: #5A6C7D;
+    line-height: 1.7;
+    font-size: 1rem;
+}
+
+/* Post Section */
+.post-section {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    border: 1px solid rgba(162, 213, 198, 0.15);
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #1A1A1A;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.announcement-form textarea {
+    border: 2px solid #E8ECF0;
+    border-radius: 14px;
+    padding: 18px;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.3s ea

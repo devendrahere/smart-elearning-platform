@@ -2,118 +2,94 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Course Discussions</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Discussions - EduSmart</title>
 
-    <style>
-        body {
-            background-color: #F6F6F6;
-            font-family: 'Poppins', sans-serif;
-            color: #000;
-        }
-        .container {
-            margin-top: 60px;
-            max-width: 900px;
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 20px;
-            border: 1px solid rgba(162, 213, 198, 0.4);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
-        }
-        .thread-item {
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            padding: 15px 0;
-        }
-        .thread-item:last-child {
-            border-bottom: none;
-        }
-        .btn-glass {
-            background-color: #A2D5C6;
-            border: none;
-            color: #000;
-            border-radius: 12px;
-            padding: 8px 18px;
-            transition: all 0.3s ease;
-        }
-        .btn-glass:hover {
-            background-color: #CFFFE2;
-            transform: translateY(-2px);
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- External CSS -->
+    <link rel="stylesheet" th:href="@{/css/discussion-list.css}">
+
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs"></script>
 </head>
+
 <body>
-<th:block th:replace="fragments/header :: header"></th:block>
+<th:block th:replace="~{fragments/header :: header}"></th:block>
 
 <div class="container">
-    <div class="glass-card">
-        <h3 th:text="'Discussions for ' + ${course.courseTitle}">Discussions</h3>
 
-        <!-- Create new thread -->
-        <div class="mb-4">
-            <form id="newThreadForm">
-                <div class="input-group">
-                    <input id="threadTitle" type="text" class="form-control" placeholder="Start a new discussion topic..." required>
-                    <button type="submit" class="btn-glass">Create</button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Threads List -->
-        <div id="threadsList">
-            <div class="thread-item" th:each="t : ${threads}">
-                <a th:href="@{'/discussion/thread/' + ${t.threadId}}" class="text-decoration-none text-dark">
-                    <h5 th:text="${t.title}">Thread Title</h5>
-                    <small class="text-muted">
-                        Started by <span th:text="${t.createdByName}">User</span> •
-                        <span th:text="${#temporals.format(t.createdAt, 'dd MMM yyyy HH:mm')}">Date</span>
-                    </small>
-                </a>
-            </div>
-        </div>
-
-        <a th:href="@{'/courses/' + ${course.courseId}}" class="btn btn-outline-secondary mt-3">← Back to Course</a>
+    <div class="page-header">
+        <h1 class="page-title">💬 Discussions</h1>
+        <p class="page-subtitle" th:text="'Course: ' + ${course.courseTitle}"></p>
     </div>
+
+    <div class="post-section">
+        <h2 class="section-title">📝 Start a Discussion</h2>
+        <form id="newThreadForm">
+            <input id="threadTitle" type="text" class="form-control thread-input"
+                   placeholder="Start a new discussion topic..." required>
+            <button type="submit" class="btn-primary-custom mt-3">Create Thread</button>
+        </form>
+    </div>
+
+    <div id="threadsList">
+
+        <div th:if="${#lists.isEmpty(threads)}" class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <p class="empty-state-text">No discussion threads yet. Start the first one!</p>
+        </div>
+
+        <div th:each="t : ${threads}" class="thread-card">
+            <a th:href="@{'/discussion/thread/' + ${t.threadId}}" class="text-decoration-none">
+                <div class="thread-title" th:text="${t.title}"></div>
+                <div class="thread-meta">
+                    Started by <span th:text="${t.createdByName}"></span> •
+                    <span th:text="${#temporals.format(t.createdAt, 'dd MMM yyyy HH:mm')}"></span>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <a th:href="@{'/courses/' + ${course.courseId}}"
+       class="btn btn-outline-secondary mt-3">← Back to Course</a>
+
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<th:block th:replace="~{fragments/footer :: footer}"></th:block>
 
 <script th:inline="javascript">
     const courseId = [[${course.courseId}]];
     const userId = [[${userId}]];
     let stompClient = null;
 
-    // Connect to WebSocket for live thread updates
     function connectSocket() {
         const socket = new SockJS('/ws');
         stompClient = Stomp.over(socket);
         stompClient.connect({}, function () {
             stompClient.subscribe(`/topic/course/${courseId}/threads`, function (message) {
-                const newThread = JSON.parse(message.body);
-                appendThread(newThread);
+                appendThread(JSON.parse(message.body));
             });
         });
     }
 
-    // Append a new thread dynamically to the list
     function appendThread(thread) {
+        const empty = document.querySelector('.empty-state');
+        if (empty) empty.remove();
+
         const div = document.createElement('div');
-        div.className = 'thread-item';
+        div.className = 'thread-card';
         div.innerHTML = `
-            <a href="/discussion/thread/${thread.threadId}" class="text-decoration-none text-dark">
-                <h5>${thread.title}</h5>
-                <small class="text-muted">
+            <a href="/discussion/thread/${thread.threadId}" class="text-decoration-none">
+                <div class="thread-title">${thread.title}</div>
+                <div class="thread-meta">
                     Started by ${thread.createdByName || 'User'} •
                     ${new Date(thread.createdAt).toLocaleString()}
-                </small>
+                </div>
             </a>`;
         document.getElementById('threadsList').prepend(div);
     }
 
-    // Handle new thread form submission
     document.getElementById('newThreadForm').addEventListener('submit', async e => {
         e.preventDefault();
         const title = document.getElementById('threadTitle').value.trim();
@@ -139,16 +115,16 @@
                 alert('Please log in to create a new discussion.');
                 window.location.href = '/login';
             } else {
-                const msg = await resp.text();
-                alert('Error creating thread: ' + msg);
+                alert('Error: ' + await resp.text());
             }
         } catch (err) {
-            console.error('Error creating thread:', err);
-            alert('An unexpected error occurred.');
+            console.error(err);
+            alert('Unexpected error.');
         }
     });
 
     connectSocket();
 </script>
+
 </body>
 </html>

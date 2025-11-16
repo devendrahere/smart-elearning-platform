@@ -1,0 +1,107 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, #F6F6F6 0%, #E8F5F1 100%);
+    font-family: 'Poppins', sans-serif;
+    color: #2C3E50;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Login Card */
+.login-card {
+    background: white;
+    border-radius: 24px;
+    padding: 40px 36px;
+    width: 100%;
+    max-width: 430px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(162, 213, 198, 0.25);
+    text-align: center;
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin-bottom: 1rem;
+}
+
+.login-subtitle {
+    color: #7D8B9A;
+    font-size: 1rem;
+    margin-bottom: 28px;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #2C3E50;
+}
+
+.form-control {
+    border-radius: 14px;
+    padding: 14px;
+    border: 2px solid #E8ECF0;
+    transition: all 0.3s ease;
+    background: #fff;
+}
+
+.form-control:focus {
+    border-color: #A2D5C6;
+    box-shadow: 0 0 0 4px rgba(162, 213, 198, 0.15);
+}
+
+/* Login Button */
+.btn-primary-custom {
+    background: linear-gradient(135deg, #A2D5C6 0%, #8FC4B3 100%);
+    border: none;
+    color: #1A1A1A;
+    font-weight: 600;
+    border-radius: 14px;
+    padding: 14px 32px;
+    font-size: 1rem;
+    width: 100%;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(162, 213, 198, 0.3);
+    margin-top: 10px;
+}
+
+.btn-primary-custom:hover {
+    background: linear-gradient(135deg, #CFFFE2 0%, #B8EDD5 100%);
+    transform: translateY(-2px);
+}
+
+.register-text {
+    margin-top: 20px;
+    font-size: 0.95rem;
+    color: #5A6C7D;
+}
+
+.register-text a {
+    color: #8FC4B3;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.register-text a:hover {
+    color: #1A1A1A;
+}

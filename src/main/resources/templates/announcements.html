@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Announcements - EduSmart</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- External CSS -->
+    <link rel="stylesheet" th:href="@{/css/announcements.css}">
+
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs"></script>
+</head>
+
+<body>
+<th:block th:replace="~{fragments/header :: header}"></th:block>
+
+<div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <span>📢</span>
+            <span>Course Announcements</span>
+        </h1>
+        <p class="page-subtitle">Stay updated with the latest news and updates for this course</p>
+    </div>
+
+    <!-- Post New Announcement (Instructor Only) -->
+    <div th:if="${isInstructor}" class="post-section">
+        <h2 class="section-title">✍️ Post New Announcement</h2>
+        <form th:action="@{'/courses/' + ${courseId} + '/announcements/create'}"
+              method="post"
+              class="announcement-form">
+            <input type="hidden" name="instructorId" th:value="${loggedInId}"/>
+            <textarea name="message"
+                      rows="4"
+                      placeholder="Share important updates, deadlines, or resources with your students..."
+                      required></textarea>
+            <button type="submit" class="btn-primary-custom mt-3">📤 Post Announcement</button>
+        </form>
+    </div>
+
+    <!-- Announcements List -->
+    <div id="announcementList">
+        <!-- Empty State -->
+        <div th:if="${#lists.isEmpty(announcements)}" class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <p class="empty-state-text">No announcements have been posted yet</p>
+        </div>
+
+        <!-- Announcement Cards -->
+        <div th:each="a : ${announcements}" class="announcement-card">
+            <div class="announcement-header">
+                <div class="announcement-author" th:text="${a.posterName}"></div>
+                <div class="announcement-time"
+                     th:text="${#temporals.format(a.createdAt, 'dd MMM yyyy HH:mm')}">
+                </div>
+
+                <!-- Delete Button (Only for Instructor) -->
+                <form th:if="${isInstructor}"
+                      th:action="@{'/courses/' + ${courseId} + '/announcements/' + ${a.announcementId} + '/delete'}"
+                      method="post"
+                      onsubmit="return confirm('Are you sure you want to delete this announcement?')">
+
+                    <button type="submit"
+                            class="btn btn-sm btn-danger"
+                            style="border-radius: 8px; padding: 6px 12px;">
+                        🗑 Delete
+                    </button>
+                </form>
+            </div>
+
+            <p class="announcement-message" th:text="${a.message}"></p>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/footer :: footer}"></th:block>
+
+<script>
+    let courseId = [[${courseId}]];
+
+    var socket = new SockJS("/ws");
+    var stomp = Stomp.over(socket);
+
+    stomp.connect({}, function () {
+        stomp.subscribe("/topic/announcement/" + courseId, function (payload) {
+            let data = JSON.parse(payload.body);
+
+            let date = new Date(data.createdAt);
+            let formattedDate = date.toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            let html = `
+                <div class="announcement-card" style="animation: slideIn 0.4s ease-out;">
+                    <div class="announcement-header">
+                        <div class="announcement-author">${data.posterName}</div>
+                        <div class="announcement-time">${formattedDate}</div>
+                    </div>
+                    <p class="announcement-message">${data.message}</p>
+                </div>
+            `;
+
+            let emptyState = document.querySelector('.empty-state');
+            if (emptyState) emptyState.remove();
+
+            document.getElementById("announcementList")
+                .insertAdjacentHTML("afterbegin", html);
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,121 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, #F6F6F6 0%, #E8F5F1 100%);
+    font-family: 'Poppins', sans-serif;
+    color: #2C3E50;
+    min-height: 100vh;
+}
+
+.container {
+    margin-top: 40px;
+    margin-bottom: 60px;
+    max-width: 950px;
+}
+
+/* Page Header */
+.page-header {
+    background: white;
+    border-radius: 24px;
+    padding: 40px;
+    margin-bottom: 30px;
+    text-align: center;
+    border: 1px solid rgba(162, 213, 198, 0.2);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.page-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #1A1A1A;
+}
+
+.page-subtitle {
+    color: #7D8B9A;
+    font-size: 1.05rem;
+}
+
+/* Card */
+.main-card {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(162, 213, 198, 0.15);
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Buttons */
+.btn-primary-custom {
+    background: linear-gradient(135deg, #A2D5C6 0%, #8FC4B3 100%);
+    border: none;
+    color: #1A1A1A;
+    font-weight: 600;
+    border-radius: 14px;
+    padding: 10px 22px;
+    transition: 0.3s;
+    box-shadow: 0 4px 15px rgba(162, 213, 198, 0.3);
+}
+
+.btn-primary-custom:hover {
+    background: linear-gradient(135deg, #CFFFE2 0%, #B8EDD5 100%);
+    transform: translateY(-2px);
+    color: #1A1A1A;
+}
+
+.btn-outline-custom {
+    border: 2px solid #A2D5C6;
+    border-radius: 12px;
+    padding: 6px 16px;
+    font-weight: 500;
+    color: #2C3E50;
+    transition: 0.3s;
+}
+
+.btn-outline-custom:hover {
+    background: #E8F5F1;
+    transform: translateY(-2px);
+}
+
+/* Table */
+.table {
+    border-radius: 12px;
+    overflow: hidden;
+}
+.table th {
+    background-color: #F2F7F5;
+}
+
+/* Quiz Section */
+.quiz-section {
+    margin-top: 50px;
+    padding-top: 30px;
+    border-top: 1px solid #E8ECF0;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1A1A1A;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Modals */
+.modal-content {
+    border-radius: 16px;
+}

@@ -1,0 +1,98 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, #F6F6F6 0%, #E8F5F1 100%);
+    font-family: 'Poppins', sans-serif;
+    color: #2C3E50;
+    min-height: 100vh;
+}
+
+.container {
+    margin-top: 60px;
+    margin-bottom: 60px;
+    max-width: 800px;
+}
+
+/* Page Header */
+.page-header {
+    background: white;
+    border-radius: 24px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(162, 213, 198, 0.2);
+    text-align: center;
+}
+
+.page-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.page-subtitle {
+    color: #7D8B9A;
+    font-size: 1.05rem;
+    margin-bottom: 0;
+}
+
+/* Quiz Card */
+.quiz-card {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(162, 213, 198, 0.15);
+    animation: slideIn 0.4s ease-out;
+    text-align: center;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.quiz-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #1A1A1A;
+    margin-bottom: 15px;
+}
+
+.quiz-description {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: #5A6C7D;
+}
+
+/* Button */
+.btn-primary-custom {
+    background: linear-gradient(135deg, #A2D5C6 0%, #8FC4B3 100%);
+    border: none;
+    color: #1A1A1A;
+    font-weight: 600;
+    border-radius: 14px;
+    padding: 14px 32px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(162, 213, 198, 0.3);
+    cursor: pointer;
+    width: 100%;
+    margin-top: 25px;
+}
+
+.btn-primary-custom:hover {
+    background: linear-gradient(135deg, #CFFFE2 0%, #B8EDD5 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(162, 213, 198, 0.4);
+    color: #1A1A1A;
+}

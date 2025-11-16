@@ -9,4 +9,6 @@ import java.util.List;
 public interface AnnouncementService {
     AnnouncementDTO createAnnouncement(Long courseId, String message, Long instructorId);
     List<AnnouncementDTO> getAnnouncementsForCourse(Long courseId);
+    void deleteAnnouncement(Long courseId, Long announcementId, Long userId);
+    boolean isInstructorOfCourse(Long courseId, Long userId);
 }

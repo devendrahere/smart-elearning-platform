@@ -1,0 +1,230 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, #F6F6F6 0%, #E8F5F1 100%);
+    font-family: 'Poppins', sans-serif;
+    color: #2C3E50;
+    min-height: 100vh;
+}
+
+/* Containers */
+.container {
+    margin-top: 40px;
+    margin-bottom: 60px;
+    max-width: 900px;
+}
+
+.courses-container {
+    margin-top: 40px;
+    margin-bottom: 60px;
+    max-width: 1100px;
+}
+
+/* Page Header */
+.page-header {
+    background: white;
+    border-radius: 24px;
+    padding: 40px;
+    margin-bottom: 30px;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(162, 213, 198, 0.2);
+}
+
+.page-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin-bottom: 12px;
+}
+
+.page-subtitle {
+    color: #7D8B9A;
+    font-size: 1.05rem;
+}
+
+/* Section Card */
+.section-card {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(162, 213, 198, 0.15);
+}
+
+.section-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #1A1A1A;
+    margin-bottom: 12px;
+}
+
+.section-subtitle {
+    color: #7D8B9A;
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+/* Meta Info */
+.meta-info {
+    margin-top: 20px;
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.meta-item {
+    font-size: 1rem;
+}
+
+.meta-label {
+    font-weight: 600;
+    color: #2C3E50;
+}
+
+.meta-value {
+    color: #5A6C7D;
+    margin-left: 6px;
+}
+
+/* Buttons */
+.btn-primary-custom {
+    background: linear-gradient(135deg, #A2D5C6 0%, #8FC4B3 100%);
+    border: none;
+    color: #1A1A1A;
+    font-weight: 600;
+    border-radius: 14px;
+    padding: 14px 32px;
+    font-size: 1rem;
+    transition: 0.3s;
+    width: 100%;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-primary-custom:hover {
+    background: linear-gradient(135deg, #CFFFE2 0%, #B8EDD5 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(162, 213, 198, 0.4);
+}
+
+.btn-secondary-custom {
+    background: #EEF4F2;
+    border-radius: 14px;
+    padding: 12px 28px;
+    font-size: 1rem;
+    color: #2C3E50;
+    font-weight: 500;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.btn-secondary-custom:hover {
+    background: #DCE7E4;
+}
+
+/* Quiz Score */
+.quiz-result {
+    text-align: center;
+}
+
+.quiz-score {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #2C3E50;
+}
+
+.badge-passed {
+    background: #C8F7C5;
+    color: #1B5E20;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.badge-failed {
+    background: #FFCDD2;
+    color: #C62828;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+/* Students List */
+.student-list li {
+    margin: 6px 0;
+    color: #2C3E50;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 30px 0;
+}
+
+.empty-state-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    opacity: 0.7;
+}
+
+/* Online Counter */
+.online-counter {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1A1A1A;
+}
+
+/* Search Box */
+.search-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 35px;
+}
+
+.search-box .form-control {
+    width: 100%;
+    max-width: 420px !important;
+}
+
+/* Course Cards */
+.course-card {
+    background: white;
+    border-radius: 20px;
+    padding: 28px;
+    border-left: 5px solid #A2D5C6;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+}
+
+.course-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 24px rgba(162, 213, 198, 0.3);
+}
+
+/* Bento Grid */
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    padding: 10px 0;
+}
+
+.bento-grid .empty-state {
+    grid-column: 1 / -1;
+}

@@ -2,66 +2,85 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${quiz.quizTitle} + ' - Attempt Quiz'">Quiz Attempt</title>
+    <title th:text="${quiz.quizTitle} + ' - Attempt Quiz'"></title>
+
+    <!-- External CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Poppins', sans-serif;
-        }
-        .card {
-            border-radius: 16px;
-        }
-        .question-block {
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #e9ecef;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/quiz-attempt.css}" rel="stylesheet">
 </head>
+
 <body>
-<div class="container mt-5">
-    <div class="card shadow p-4">
-        <h2 th:text="${quiz.quizTitle}">Quiz Title</h2>
-        <p class="text-muted" th:text="${quiz.description}">Description</p>
-        <hr>
+
+<th:block th:replace="~{fragments/header :: header}"></th:block>
+
+<div class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <span>📝</span>
+            <span th:text="${quiz.quizTitle}">Quiz Title</span>
+        </h1>
+        <p class="page-subtitle">Complete the quiz below and submit your answers</p>
+    </div>
+
+    <!-- Quiz Content -->
+    <div class="quiz-card">
+
+        <p class="quiz-description mb-4" th:text="${quiz.description}"></p>
 
         <form th:action="@{'/quizzes/' + ${quiz.quizId} + '/submit'}" method="post">
 
-            <!-- ✅ Loop through each question -->
+            <!-- Questions -->
             <div th:each="q, iterStat : ${questions}" class="question-block">
-                <h5 th:text="'Q' + ${iterStat.index + 1} + '. ' + ${q.questionText}">Question text</h5>
+                <h5 class="question-title"
+                    th:text="'Q' + ${iterStat.index + 1} + '. ' + ${q.questionText}">
+                </h5>
 
-                <!-- ✅ Option A -->
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" th:name="'question_' + ${q.questionId}" th:value="${q.optionA}" required>
-                    <label class="form-check-label" th:text="${q.optionA}">Option A</label>
+                <!-- Option A -->
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="radio"
+                           th:name="'question_' + ${q.questionId}"
+                           th:value="${q.optionA}" required>
+                    <label class="form-check-label" th:text="${q.optionA}"></label>
                 </div>
 
-                <!-- ✅ Option B -->
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" th:name="'question_' + ${q.questionId}" th:value="${q.optionB}">
-                    <label class="form-check-label" th:text="${q.optionB}">Option B</label>
+                <!-- Option B -->
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="radio"
+                           th:name="'question_' + ${q.questionId}"
+                           th:value="${q.optionB}">
+                    <label class="form-check-label" th:text="${q.optionB}"></label>
                 </div>
 
-                <!-- ✅ Option C -->
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" th:name="'question_' + ${q.questionId}" th:value="${q.optionC}">
-                    <label class="form-check-label" th:text="${q.optionC}">Option C</label>
+                <!-- Option C -->
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="radio"
+                           th:name="'question_' + ${q.questionId}"
+                           th:value="${q.optionC}">
+                    <label class="form-check-label" th:text="${q.optionC}"></label>
                 </div>
 
-                <!-- ✅ Option D -->
+                <!-- Option D -->
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" th:name="'question_' + ${q.questionId}" th:value="${q.optionD}">
-                    <label class="form-check-label" th:text="${q.optionD}">Option D</label>
+                    <input class="form-check-input" type="radio"
+                           th:name="'question_' + ${q.questionId}"
+                           th:value="${q.optionD}">
+                    <label class="form-check-label" th:text="${q.optionD}"></label>
                 </div>
             </div>
 
+            <!-- Submit -->
             <div class="text-center mt-4">
-                <button type="submit" class="btn btn-success px-4 py-2">Submit Quiz</button>
+                <button type="submit" class="btn-primary-custom">🚀 Submit Quiz</button>
             </div>
+
         </form>
     </div>
 </div>
+
+<th:block th:replace="~{fragments/footer :: footer}"></th:block>
+
 </body>
 </html>

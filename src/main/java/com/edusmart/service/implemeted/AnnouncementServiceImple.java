@@ -52,6 +52,29 @@ public class AnnouncementServiceImple implements AnnouncementService {
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
+    @Override
+    public boolean isInstructorOfCourse(Long courseId, Long userId) {
+        Courses course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourcesNotFound("Course not found"));
+
+        return course.getInstructor().getUserId().equals(userId);
+    }
+
+    @Override
+    public void deleteAnnouncement(Long courseId, Long announcementId, Long userId) {
+        Announcements announcement = announcementRepository.findById(announcementId)
+                .orElseThrow(() -> new ResourcesNotFound("Announcement not found"));
+
+        if (!announcement.getCourse().getCourseId().equals(courseId)) {
+            throw new RuntimeException("Unauthorized delete attempt");
+        }
+
+        if (!announcement.getCourse().getInstructor().getUserId().equals(userId)) {
+            throw new RuntimeException("Only instructor can delete announcements");
+        }
+
+        announcementRepository.delete(announcement);
+    }
 
 
     //mapping helpers

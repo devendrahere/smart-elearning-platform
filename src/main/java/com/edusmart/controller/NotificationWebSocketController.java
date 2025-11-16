@@ -15,41 +15,44 @@ public class NotificationWebSocketController {
     private SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    public NotificationService notificationService;
+    private NotificationService notificationService;
 
+    // Create + push notification to specific user
     @MessageMapping("/notify")
     public void processNotification(CreateNotificationDTO notificationDTO){
-        NotificationDTO savedNotification=notificationService.createNotification(notificationDTO);
+        NotificationDTO saved = notificationService.createNotification(notificationDTO);
+
         messagingTemplate.convertAndSendToUser(
-                savedNotification.getUserId().toString(),
-                "/queue/notification",
-                savedNotification
+                saved.getUserId().toString(),
+                "/queue/notifications",     // FIXED: must match service
+                saved
         );
     }
 
+    // Create + push to global topic
     @MessageMapping("/broadcast")
     public void broadcastNotification(CreateNotificationDTO notificationDTO){
-        NotificationDTO saved=notificationService.createNotification(notificationDTO);
+        NotificationDTO saved = notificationService.createNotification(notificationDTO);
 
-        messagingTemplate.convertAndSend("/topic/global",saved);
-    }
-
-    @MessageMapping("/ack")
-    public void acknowledgeNotification(NotificationDTO notificationDTO){
-        notificationService.markAsRead(notificationDTO.getNotificationId());
-
-        messagingTemplate.convertAndSendToUser(
-                notificationDTO.getUserId().toString()
-                ,"/queue/acknowledgments",
-                "NotificationId "+notificationDTO.getNotificationId() +" marked as read."
+        messagingTemplate.convertAndSend(
+                "/topic/global",
+                saved
         );
     }
 
-    private void sendToUser(Long userId,NotificationDTO dto){
+    // Mark notification as read
+    @MessageMapping("/ack")
+    public void acknowledgeNotification(NotificationDTO notificationDTO){
+
+        notificationService.markAsRead(
+                notificationDTO.getNotificationId(),
+                notificationDTO.getUserId()       // use the userId from DTO
+        );
+
         messagingTemplate.convertAndSendToUser(
-                userId.toString(),
-                "/queue/notifications",
-                dto
+                notificationDTO.getUserId().toString(),
+                "/queue/acknowledgments",
+                "Notification " + notificationDTO.getNotificationId() + " marked as read"
         );
     }
 }

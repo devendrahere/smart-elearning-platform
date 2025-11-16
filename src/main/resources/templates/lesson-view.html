@@ -74,6 +74,12 @@
         <h2 th:text="${lesson.lessonTitle}">Lesson Title</h2>
         <p class="lesson-info" th:text="'Lesson ' + ${lesson.lessonOrder}"></p>
 
+        <!-- 🔙 Always visible Back to Lessons button -->
+        <a th:href="@{'/courses/' + ${lesson.courseId} + '/lessons'}"
+           class="btn-glass mb-3">
+            📚 Back to Lessons
+        </a>
+
         <!-- ✅ Embed YouTube, MP4, or other URLs -->
         <div th:if="${lesson.contentUrl}">
             <!-- For MP4 videos -->
@@ -97,8 +103,21 @@
         </div>
 
         <div class="lesson-nav mt-4">
-            <a th:if="${prevLessonId != null}" th:href="@{'/lesson/' + ${prevLessonId}}" class="btn-glass">← Previous</a>
-            <a th:if="${nextLessonId != null}" th:href="@{'/lesson/' + ${nextLessonId}}" class="btn-glass ms-auto">Next →</a>
+
+            <!-- Previous Lesson -->
+            <a th:if="${prevLessonId != null}"
+               th:href="@{'/lesson/' + ${prevLessonId}}"
+               class="btn-glass">← Previous</a>
+
+            <!-- Next Lesson -->
+            <a th:if="${nextLessonId != null}"
+               th:href="@{'/lesson/' + ${nextLessonId}}"
+               class="btn-glass ms-auto">Next →</a>
+
+            <!-- Back to lessons list when last lesson -->
+            <a th:if="${nextLessonId == null}"
+               th:href="@{'/courses/' + ${lesson.courseId} + '/lessons'}"
+               class="btn-glass ms-auto">📚 Back to Lessons</a>
         </div>
     </div>
 </div>

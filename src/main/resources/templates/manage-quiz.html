@@ -3,56 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <title>Manage Quiz - EduSmart</title>
+
+    <!-- Bootstrap + Fonts -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #F6F6F6; font-family: 'Poppins', sans-serif; color: #000; }
-        .container { margin-top: 60px; max-width: 700px; }
-        .glass-card { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(162, 213, 198, 0.5);
-            border-radius: 20px; padding: 25px; box-shadow: 0 4px 25px rgba(0,0,0,0.05); }
-        .btn-glass { background-color: #A2D5C6; border: none; color: #000; border-radius: 10px;
-            padding: 10px 20px; transition: all 0.3s ease; }
-        .btn-glass:hover { background-color: #CFFFE2; transform: translateY(-2px); }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- External CSS -->
+    <link rel="stylesheet" th:href="@{/css/manage-quiz.css}">
 </head>
+
 <body>
 <th:block th:replace="~{fragments/header :: header}"></th:block>
 
 <div class="container">
-    <div class="glass-card">
-        <h3 th:text="${quiz.quizId != null ? 'Edit Quiz' : 'Add New Quiz'}"></h3>
 
-        <!-- ✅ FIXED: Added th:object="${quiz}" -->
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <span>📝</span>
+            <span th:text="${quiz.quizId != null ? 'Edit Quiz' : 'Create New Quiz'}"></span>
+        </h1>
+        <p class="page-subtitle">Customize your quiz title, description, and settings</p>
+    </div>
+
+    <!-- Form Section -->
+    <div class="form-section">
+        <h2 class="section-title">📄 Quiz Details</h2>
+
         <form th:action="@{${quiz.quizId != null} ? '/quiz/manage/update' : '/quiz/manage/save'}"
               th:object="${quiz}"
               method="post">
 
             <input type="hidden" th:field="*{courseId}"/>
 
+            <!-- Quiz Title -->
             <div class="mb-3">
-                <label class="form-label">Quiz Title</label>
-                <input type="text" class="form-control" th:field="*{quizTitle}" placeholder="Enter quiz title" required>
+                <label class="form-label fw-semibold">Quiz Title</label>
+                <input type="text"
+                       class="form-control form-control-custom"
+                       th:field="*{quizTitle}"
+                       placeholder="Enter quiz title"
+                       required>
             </div>
 
+            <!-- Description -->
             <div class="mb-3">
-                <label class="form-label">Description</label>
-                <textarea class="form-control" rows="3" th:field="*{description}" placeholder="Enter description"></textarea>
+                <label class="form-label fw-semibold">Description</label>
+                <textarea class="form-control form-control-custom"
+                          rows="4"
+                          th:field="*{description}"
+                          placeholder="Describe the purpose of this quiz..."></textarea>
             </div>
 
+            <!-- Buttons -->
             <div class="text-end">
-                <button type="submit" class="btn-glass">💾 Save</button>
+                <button type="submit" class="btn-primary-custom">💾 Save</button>
+
                 <a th:href="@{'/courses/' + ${quiz.courseId} + '/lessons/manage'}"
-                   class="btn btn-outline-secondary ms-2">Cancel</a>
+                   class="btn btn-outline-secondary ms-2 cancel-btn">
+                    Cancel
+                </a>
             </div>
-            <!-- Show "Manage Questions" button only if the quiz already exists -->
-            <div th:if="${quiz.quizId != null}" class="mt-4 text-center">
-                <hr class="my-4">
-                <h5>Want to add questions?</h5>
-                <a th:href="@{'/quiz/questions/' + ${quiz.quizId}}" class="btn-glass mt-2">📝 Manage Questions</a>
+
+            <!-- Manage Questions Section -->
+            <div th:if="${quiz.quizId != null}" class="manage-questions-section">
+                <h5 class="fw-semibold">Want to add questions?</h5>
+                <a th:href="@{'/quiz/questions/' + ${quiz.quizId}}"
+                   class="btn-primary-custom mt-3">
+                    ➕ Manage Questions
+                </a>
             </div>
         </form>
     </div>
 </div>
 
 <th:block th:replace="~{fragments/footer :: footer}"></th:block>
+
 </body>
 </html>

@@ -13,8 +13,19 @@ public class UIAnnouncementService {
     @Autowired
     private AnnouncementService announcementService;
 
-    public List<AnnouncementDTO> getAnnouncementsForCourse(Long courseID) {
-        return announcementService.getAnnouncementsForCourse(courseID);
+    public List<AnnouncementDTO> getAnnouncementsForCourse(Long courseId) {
+        return announcementService.getAnnouncementsForCourse(courseId);
     }
 
+    public AnnouncementDTO createAnnouncement(Long courseId, Long instructorId, String message) {
+        return announcementService.createAnnouncement(courseId, message, instructorId);
+    }
+
+    public boolean isInstructorOfCourse(Long courseId, Long userId) {
+        return announcementService.isInstructorOfCourse(courseId, userId);
+    }
+
+    public void deleteAnnouncement(Long courseId, Long announcementId, Long userId) {
+        announcementService.deleteAnnouncement(courseId, announcementId, userId);
+    }
 }

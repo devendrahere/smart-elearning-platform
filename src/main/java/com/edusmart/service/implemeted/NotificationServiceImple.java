@@ -8,7 +8,6 @@ import com.edusmart.exception.ResourcesNotFound;
 import com.edusmart.repository.NotificationRepository;
 import com.edusmart.repository.UserRepository;
 import com.edusmart.service.NotificationService;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -64,11 +63,17 @@ public class NotificationServiceImple implements NotificationService {
     }
 
     @Override
-    public NotificationDTO markAsRead(Long notificationId) {
-        Notification notification= notificationRepository.findById(notificationId)
-                .orElseThrow(()->new ResourcesNotFound("Notification not found with id: "+notificationId));
+    public NotificationDTO markAsRead(Long notificationId, Long userId) {
+        Notification notification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new ResourcesNotFound("Notification not found: " + notificationId));
+
+        if (!notification.getUser().getUserId().equals(userId)) {
+            throw new IllegalArgumentException("You cannot mark another user's notification as read");
+        }
+
         notification.setRead(true);
-        Notification updated=notificationRepository.save(notification);
+        Notification updated = notificationRepository.save(notification);
+
         return mapToDTO(updated);
     }
 
