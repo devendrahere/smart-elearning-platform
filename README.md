@@ -15,19 +15,14 @@ A modern, feature-rich Learning Management System (LMS) built with Spring Boot 3
 
 ### 📖 Comprehensive Course Management
 - Create and organize courses with categories
-- Multi-level content structure (Courses → Lessons → Materials)
-- File upload/download system for course materials
+- Multi-level content structure (Courses → Lessons )
 - Instructor dashboard for course creation and management
 - Student enrollment and course access system
-- Progress tracking with visual indicators
 
 ### ✅ Interactive Assessment System
 - Quiz builder with multiple question types
 - Automated grading system
-- Quiz attempt tracking and history
 - Detailed result analysis and feedback
-- Time-limited assessments
-- Certificate generation upon course completion
 
 ### 🔔 Real-Time Features
 - **WebSocket + STOMP** for instant messaging
@@ -35,34 +30,27 @@ A modern, feature-rich Learning Management System (LMS) built with Spring Boot 3
 - Real-time course announcements
 - Live discussion updates
 - User presence indicators (online/offline status)
-- Instant progress updates
 
 ### 💬 Discussion Forum System
 - Thread-based discussions for each course
 - Real-time commenting and replies
 - Nested conversation threads
-- Instructor Q&A support
 - Community engagement features
 
 ### 📊 Analytics & Reporting
 - Comprehensive learning analytics dashboard
-- Student progress visualization with charts
 - Course performance metrics
 - Platform usage statistics
 - Activity logs and audit trails
-- Custom reporting capabilities
 
 ### ⚡ Performance Optimization
 - **Redis Integration** for caching frequently accessed data
-- Session management with Redis
-- Database query optimization
 - Connection pooling configuration
 - Spring Boot Actuator for monitoring
 - Health checks and metrics endpoints
 
 ### 🎨 Modern Responsive UI
 - Thymeleaf template engine with Bootstrap 5
-- Mobile-responsive design
 - Clean and intuitive user interface
 - Dynamic content loading
 - Interactive JavaScript components
@@ -91,9 +79,7 @@ A modern, feature-rich Learning Management System (LMS) built with Spring Boot 3
 - **Schema Management**: Hibernate with JPA
 
 ### DevOps
-- **Containerization**: Docker & Docker Compose
 - **Version Control**: Git
-- **Documentation**: Swagger/OpenAPI (optional)
 
 ## 📁 Project Structure
 
@@ -465,4 +451,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👥 Author
 
-- **Devendra C** - [YourGithub](https://github.com/devendrahere)
+- **Devendra C** - [devendrahere](https://github.com/devendrahere)
